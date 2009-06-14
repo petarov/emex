@@ -4,10 +4,11 @@ use warnings;
 use strict;
 
   use SOAP::Lite;
-
-  my $soap = SOAP::Lite
-    -> uri('urn:Employee')
-    -> proxy('http://localhost:9002');
+  #my $soap = SOAP::Lite
+  #  -> uri('urn:Employee')
+  #  -> proxy('http://localhost:9002');
+  my $soap = SOAP::Lite 
+  -> service('file:./test.wsdl');
 
   my $obj = $soap->call( new => "Stoqn")->result;
 
