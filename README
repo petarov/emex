@@ -1,11 +1,26 @@
-emex
-----------------------
-e-mail client extended
+emex | README FILE
 
 
-README FILE
+Requirements
+-----------------------------------------------------
+
+ 1. Perl Modules
+ 
+ It is required that the following modules are installed on your Perl installation.
+
+ o	Mail::IMAPClient
+ o	SOAP::Lite
+ 
+ 2. Win32
+ 
+ When using the Win32 client, make sure you have .NET Framework 2.0 installed. This 
+ should be available anyway with Windows XP SP2.
 
 
-1. Requirements
 
-1.1. Perl Modules
+Known Issues
+-----------------------------------------------------
+
+1. By 03.Jun.2009 - There was still an issue to install SOAP::Lite
+within CPAN (Ref: http://rt.cpan.org/Public/Bug/Display.html?id=37151).
+Resolution to copy modules manually was used !
