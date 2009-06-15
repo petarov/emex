@@ -8,7 +8,7 @@ use strict;
   #  -> uri('urn:Employee')
   #  -> proxy('http://localhost:9002');
   my $soap = SOAP::Lite 
-  -> service('file:./test.wsdl');
+  -> schema('file:./test.wsdl');
 
   my $obj = $soap->call( new => "Stoqn")->result;
 

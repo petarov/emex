@@ -8,7 +8,7 @@ package Employee;
 =begin WSDL
 
 _IN in $string
-_RETURN $string
+_RETURN $anyType
 
 =cut
 
@@ -24,12 +24,10 @@ sub new {
     };
     
     bless $obj_ptr => $class;
-
 }
 
 =begin WSDL
 
-_IN in $string
 _RETURN $string
 
 =cut
@@ -38,7 +36,15 @@ sub getName {
 	return shift->{"Name"};
 }
 
-sub getType {
+=begin WSDL
+
+_RETURN $string
+
+=cut
+
+sub getTypeARE {
+	my $self = shift;
+	
 	return 'whats done is done';
 }
 

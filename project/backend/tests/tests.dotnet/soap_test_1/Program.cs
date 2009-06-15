@@ -10,11 +10,15 @@ namespace soap_test_1
         static void Main(string[] args)
         {
             Console.WriteLine("Testing ...");
+            
+            localhost.soaplite.EmployeeHandlerService ehs = new soap_test_1.localhost.soaplite.EmployeeHandlerService();
+            ehs.Url = "http://localhost:9002";
+            
+            string test = "hello cworld";
+            ehs.@new(@test);
+            ehs.getName();
 
-
-            localhost.soaplite sp = new localhost.soaplite();
-
-
+            //Console.WriteLine( );
             Console.ReadKey();
         }
     }
