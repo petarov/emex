@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "soap_test_1", "soap_test_1\soap_test_1.csproj", "{E1ABBE0B-A971-4201-B792-64E0AE2F8393}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "json_test_1", "json_test_1\json_test_1.csproj", "{5D80442B-5124-4649-87A9-414D1F1FF167}"
