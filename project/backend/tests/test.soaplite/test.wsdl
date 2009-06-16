@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<wsdl:definitions targetNamespace="http://localhost:9002/Employee" xmlns:impl="http://localhost:9002/Employee" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns1="http://localhost:9002/Employee">
+	<types>
+		<xsd:schema targetNamespace="http://localhost:9002/Employee">
+			<xsd:element name="getNameRequest" type="xsd:string" />
+			<xsd:element name="getNameResponse" type="xsd:string" />
+			<xsd:element name="newRequest" type="xsd:string" />
+			<xsd:complexType name="newResponse">
+				<xsd:sequence>
+					<xsd:element name="Name" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="getTypeRequest" type="xsd:string" />
+			<xsd:element name="getTypeResponse" type="xsd:string" />
+		</xsd:schema>
+	</types>
+	<message name="getNameRequest">
+		<part name="getNameRequestSoapMsg" element="xsdl:getNameRequest"/>
+	</message>
+	<message name="getNameResponse">
+		<part name="getNameResponseSoapMsg" element="xsdl:getNameResponse"/>
+	</message>
+	<message name="getTypeRequest">
+		<part name="getTypeRequestSoapMsg" element="xsdl:getTypeRequest"/>
+	</message>
+	<message name="getTypeResponse">
+		<part name="getTypeResponseSoapMsg" element="xsdl:getTypeResponse"/>
+	</message>
+	<message name="newRequest">
+		<part name="newRequestSoapMsg" element="xsdl:newRequest"/>
+	</message>
+	<message name="newResponse">
+		<part name="newResponseSoapMsg" element="xsdl:newResponse"/>
+	</message>
+	<portType name="EmployeeEmployeePortType">
+		<operation name="getName">
+			<input message="tns:getNameRequest" />
+			<output message="tns:getNameResponse" />
+		</operation>
+		<operation name="getType">
+			<input message="tns:getTypeRequest" />
+			<output message="tns:getTypeResponse" />
+		</operation>
+		<operation name="new">
+			<input message="tns:newRequest" />
+			<output message="tns:newResponse" />
+		</operation>
+	</portType>
+	<binding name="EmployeeEmployeeBinding" type="tns:EmployeeEmployeePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+			<operation name="getName">
+				<soap:operation style="document" soapAction=""/>
+				<input>
+					<soap:body use="literal"/>
+				</input>
+				<output>
+					<soap:body use="literal"/>
+				</output>
+			</operation>
+			<operation name="getType">
+				<soap:operation style="document" soapAction=""/>
+				<input>
+					<soap:body use="literal"/>
+				</input>
+				<output>
+					<soap:body use="literal"/>
+				</output>
+			</operation>
+			<operation name="new">
+				<soap:operation style="document" soapAction=""/>
+				<input>
+					<soap:body use="literal"/>
+				</input>
+				<output>
+					<soap:body use="literal"/>
+				</output>
+			</operation>
+	</binding>
+	<service name="Employee">
+		<documentation>
+			Emex services online
+		</documentation>
+		<port name="EmployeeEmployeePort" binding="tns:EmployeeEmployeeBinding">
+			<soap:address location="http://localhost:9002/Employee"/>
+		</port>
+	</service>
+</definitions>
