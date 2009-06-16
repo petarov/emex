@@ -1,4 +1,5 @@
-emex | README FILE
+.o: EmEx :o.
+README FILE
 
 
 Requirements
@@ -9,12 +10,14 @@ Requirements
  It is required that the following modules are installed on your Perl installation.
 
  o	Mail::IMAPClient
- o	SOAP::Lite
+ o  JSON:XS
+ o	SOAP::Lite ($OBSOLETE$)
+
  
  2. Win32
  
- When using the Win32 client, make sure you have .NET Framework 2.0 installed. This 
- should be available anyway with Windows XP SP2.
+ When using the Win32 client, make sure you have .NET Framework 3.5 installed. This 
+ should be available anyway with Windows XP SP3.
 
 
 
