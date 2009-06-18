@@ -1,21 +1,20 @@
-package Logger::Base;
+package Modules::Logger;
 
 use strict;
 use warnings;
 
-use Log::Log4perl;
-#use Log::Log4perl qw(get_logger);
 use File::Spec;
+use Env qw(EMEX_PATH);
+use Log::Log4perl;
 
-use constant LOGGER_CONF => File::Spec->rel2abs( '../lib/Logger/logger-default.conf' );
+use constant LOGGER_CONF => File::Spec->rel2abs( 
+								File::Spec->catfile( 'C:/prj/emex/', '/conf/logger-default.conf') );
 
-sub init {
+sub create {
 	my ($package) = @_;
 	
 	Log::Log4perl::init( LOGGER_CONF );
 	my $logger = Log::Log4perl->get_logger($package);
-	#$logger->error( "I've got something to say!" );
-	
 	return $logger;
 }
 

@@ -1,4 +1,4 @@
-package HTTPServer::Core;
+package Modules::RequestHandler;
 
 use strict;
 use warnings;

@@ -1,4 +1,4 @@
-package HTTPServer::Core;
+package Modules::Mailbox;
 
 use strict;
 use warnings;
