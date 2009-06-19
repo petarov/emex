@@ -8,11 +8,12 @@ use Env qw(EMEX_PATH);
 use Log::Log4perl;
 
 use constant LOGGER_CONF => File::Spec->rel2abs( 
-								File::Spec->catfile( 'C:/prj/emex/', '/conf/logger-default.conf') );
+								File::Spec->catfile( 'e:/projects/emex/', '/conf/logger-default.conf') );
 
 sub create {
 	my ($package) = @_;
 	
+	$| = 1;
 	Log::Log4perl::init( LOGGER_CONF );
 	my $logger = Log::Log4perl->get_logger($package);
 	return $logger;
