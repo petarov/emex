@@ -5,10 +5,13 @@ use warnings;
 
 use File::Spec;
 use Env qw(EMEX_PATH);
+use Cwd;
 use Log::Log4perl;
 
-use constant LOGGER_CONF => File::Spec->rel2abs( 
-								File::Spec->catfile( 'e:/projects/emex/', '/conf/logger-default.conf') );
+use constant LOGGER_CONF => File::Spec->catfile( 
+								File::Spec->rel2abs( 
+									File::Spec->catfile( cwd(), '../../conf' ) ), 'logger-default.conf');
+#print LOGGER_CONF;
 
 sub create {
 	my ($package) = @_;

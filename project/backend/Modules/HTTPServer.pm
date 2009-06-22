@@ -5,8 +5,7 @@ use warnings;
 use HTTP::Daemon;
 use HTTP::Status qw(:constants );
 use Logger;
-use RequestHandler qw(:constants );
-
+use RequestHandler;
 
 ### globals
 my $logger = Modules::Logger::create(__PACKAGE__);	
@@ -44,35 +43,35 @@ sub start {
   	while(my $client = $d->accept  ) {
   		while(my $req = $client->get_request) {
   			if ( $req->method eq 'GET' ) {
-  				my $req = Modules::RequestHandler->new( $req->url->path );
-  				my $res = $req->handle_method_get();
-  				$stopit = 1;
-  				#if ( $res == RequestHandler::CMD_STOPSERVER ) {
-  			#		$stopit = 1;
-  			#	} 
+  				my $req = Modules::RequestHandler->new( $req->uri, $req->url->path );
+  				my $resp = $req->handle_method_get();
   				
-  				my $txt = "DIR";
-    			my $resp = HTTP::Response->new( HTTP_OK, OK => [ 'Content-Type' => 'text/plain' ], $txt );			
+  				# is there a QUIT/EXIT signal ?
+  				$stopit = $req->is_quit_signal();
+  				
   				$client->send_response( $resp );
+  				$logger->debug("Response is sent!");
   			}
   			elsif( $req->method eq 'POST' ) {
   				my $req = Modules::RequestHandler->new( $req->url->path );
   				$req->handle_method_post();
 
 				my $txt = "DIR";
-    			my $resp = HTTP::Response->new( HTTP_OK, OK => [ 'Content-Type' => 'text/plain' ], $txt );			
+    			my $resp = HTTP::Response->new( HTTP_OK, OK => [ 'Content-Type' => 'text/plain', 'Connection' => 'close' ], $txt );
   				$client->send_response( $resp );
   			}
   			else {
   				$logger->warn('Unhandled HTTP method passed -> ' . $req->method );
   				$client->send_response( HTTP_NOT_FOUND );
   			}
+  			$logger->debug("REQ END!");
   		}
+  		
+  		$logger->debug("Closing client ...");
   		$client->close;
   		undef($client);
-  		$logger->debug("CLIENT END!");
-  		last  ; #if ( $stopit eq 1 );
-  			
+  		
+  		last if ( $stopit eq 1 );
   	}
   	  	
   	$logger->info('Server stopped.');

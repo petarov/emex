@@ -15,7 +15,7 @@ my $srv = Modules::HTTPServer->new('127.0.0.1','8080');
 $srv->test_server();
 $srv->start();
 
-print "READY!";
+print "!! EOF !!";
 
 #my $log = Logger::Base::init(__PACKAGE__);
 #$log->debug("info");
