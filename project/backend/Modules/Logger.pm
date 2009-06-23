@@ -1,3 +1,14 @@
+#******************************************************************************
+# File: Logger.pm
+# Description:  
+# Author:       Petar Petrov <pro.xex@gmail.com>
+#
+# Copyright (c) 2009 Petar Petrov.  All rights reserved.
+# This module is free software; you can redistribute it and/or modify
+# it under the same terms as Perl itself.
+#
+#******************************************************************************
+
 package Modules::Logger;
 
 use strict;
@@ -10,8 +21,7 @@ use Log::Log4perl;
 
 use constant LOGGER_CONF => File::Spec->catfile( 
 								File::Spec->rel2abs( 
-									File::Spec->catfile( cwd(), '../../conf' ) ), 'logger-default.conf');
-#print LOGGER_CONF;
+									File::Spec->catfile( cwd(), '../../data/conf' ) ), 'logger-default.conf');
 
 sub create {
 	my ($package) = @_;

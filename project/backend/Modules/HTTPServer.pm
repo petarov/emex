@@ -1,3 +1,14 @@
+#******************************************************************************
+# File: HTTPServer.pm
+# Description:  
+# Author:       Petar Petrov <pro.xex@gmail.com>
+#
+# Copyright (c) 2009 Petar Petrov.  All rights reserved.
+# This module is free software; you can redistribute it and/or modify
+# it under the same terms as Perl itself.
+#
+#******************************************************************************
+
 package Modules::HTTPServer;
 use strict;
 use warnings;
@@ -34,7 +45,7 @@ sub start {
   	my $d = HTTP::Daemon->new(
            LocalAddr => $self->{host},
            LocalPort => $self->{port},
-  	) || die('FAILD');
+  	) || $logger->error_die("Failed to start HTTP server !");
   	
   	$logger->debug('Server URL is ' . $d->url);
   	
@@ -44,33 +55,26 @@ sub start {
   		while(my $req = $client->get_request) {
   			if ( $req->method eq 'GET' ) {
   				my $req = Modules::RequestHandler->new( $req->uri, $req->url->path );
-  				my $resp = $req->handle_method_get();
-  				
+  				my $resp = $req->handle_method_get($req);
   				# is there a QUIT/EXIT signal ?
   				$stopit = $req->is_quit_signal();
-  				
   				$client->send_response( $resp );
-  				$logger->debug("Response is sent!");
   			}
   			elsif( $req->method eq 'POST' ) {
   				my $req = Modules::RequestHandler->new( $req->url->path );
-  				$req->handle_method_post();
-
-				my $txt = "DIR";
-    			my $resp = HTTP::Response->new( HTTP_OK, OK => [ 'Content-Type' => 'text/plain', 'Connection' => 'close' ], $txt );
+  				my $resp = $req->handle_method_post();
   				$client->send_response( $resp );
   			}
   			else {
   				$logger->warn('Unhandled HTTP method passed -> ' . $req->method );
-  				$client->send_response( HTTP_NOT_FOUND );
+  				$client->send_response( HTTP_METHOD_NOT_ALLOWED );
   			}
-  			$logger->debug("REQ END!");
   		}
   		
   		$logger->debug("Closing client ...");
   		$client->close;
   		undef($client);
-  		
+  		# exit on signal ...
   		last if ( $stopit eq 1 );
   	}
   	  	
