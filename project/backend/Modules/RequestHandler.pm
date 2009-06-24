@@ -16,7 +16,6 @@ use warnings;
 
 use HTTP::Daemon;
 use HTTP::Status qw(:constants );
-use HTTP::Request::Params;
 use JSON::XS;
 use MIME::Base64;
 use URI;
@@ -87,7 +86,8 @@ sub handle_method_get {
 		   #   print "$key: ", $u1->query_param($key), "\n"; 
 		 # }
 		
-		my $mbox = Modules::Mailbox->new( $u1->query_param('name') ); 
+		my $mbox = Modules::Mailbox->new( $u1->query_param('name') );
+		$mbox->register('localhost','bai_ivan','143','1'); 
 		$response = form_response_ok( "This is REGISTER request !" );
 		
 	}

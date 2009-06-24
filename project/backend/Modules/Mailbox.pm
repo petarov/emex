@@ -14,13 +14,15 @@ package Modules::Mailbox;
 use strict;
 use warnings;
 
-use File::Spec;
+use File::Spec::Functions;
+use File::Copy;
 use Cwd;
 use Log::Log4perl;
 use DBI qw(:sql_types);
 use Logger;
 
-use constant DB_PATH => File::Spec->rel2abs( File::Spec->catfile( cwd(), '../../data/db' ) );
+use constant DB_PATH => File::Spec->rel2abs( catfile( cwd(), '../../data/db' ) );
+use constant DB_PROTOTYP_PATH => File::Spec->rel2abs( catfile( DB_PATH, 'prototype-acc.s3db' ) );
 
 ### globals
 my $logger = Modules::Logger::create(__PACKAGE__);
@@ -43,25 +45,71 @@ sub new {
 sub _open {
 	my $self = shift;
 	
-	# open db
-	my $db_path = File::Spec->catfile( DB_PATH, 'test-acc.s3db' );
-	my $dbh = DBI->connect("dbi:SQLite:dbname=$db_path","","") 
-		|| $logger->logdie("Error connecting DBI : $DBI::errstr ");
+	# get db name
+	my $userdb = $self->_getUserDBPath();
+	
+	# create OR open 
+	if ( ! -e $userdb ) {
+		$logger->info("Creating $userdb from prototype database ...");
+		copy( DB_PROTOTYP_PATH, $userdb ) 
+			or $logger->logdie("Failed copying " . DB_PROTOTYP_PATH . " to $userdb !");
+	}
+	else {
+		$logger->debug("Database ($userdb) for user $self->{'email'} found !");
+	}
+	
+	my $db_handle = DBI->connect("dbi:SQLite:dbname=$userdb","","") 
+		|| $logger->logdie("Error connecting DBI : $DBI::errstr !");
 				        
-	# write into the DB
-	my $sth = $dbh->prepare("INSERT INTO settings VALUES (?,?)");
+	# TODO: nothing needed, right now !
+	$db_handle->disconnect();
+}
+
+sub _getUserDBPath {
+	my $self = shift;
+	# get db name
+	my $userdb_name = $self->{'email'};
+	$userdb_name =~ s/@/__/;
+	$userdb_name .= '.s3db';
+	my $userdb_path = catfile( DB_PATH, $userdb_name );
+	
+	return $userdb_path;
+}
+
+sub register {
+	my ($self, $server, $user, $port, $ssl) = @_;
+
+	my $userdb = $self->_getUserDBPath();
+	my $db_handle = DBI->connect("dbi:SQLite:dbname=$userdb","","", {
+      RaiseError => 0, AutoCommit => 0 } ) 
+      || $logger->logdie("Error connecting DBI : $DBI::errstr !");
+	
+	# write SOMETHING into the DB
+	my $sth; 
+	
+	$sth = $db_handle->prepare("INSERT INTO settings VALUES (?,?)");
 	$sth->bind_param(1, 'email', SQL_VARCHAR);
 	$sth->bind_param(2, $self->{'email'}, SQL_VARCHAR);
 	$sth->execute();	
 	
-	$dbh->disconnect();
+	$sth->bind_param(1, 'server', SQL_VARCHAR);
+	$sth->bind_param(2, $server, SQL_VARCHAR);
+	$sth->execute();	
 	
-}
+	$sth->bind_param(1, 'user', SQL_VARCHAR);
+	$sth->bind_param(2, $user, SQL_VARCHAR);
+	$sth->execute();
 
-sub register {
-	my ($self, $email, $server, $user, $port, $ssl) = @_;
+	$sth->bind_param(1, 'port', SQL_VARCHAR);
+	$sth->bind_param(2, $port, SQL_VARCHAR);
+	$sth->execute();
+
+	$sth->bind_param(1, 'ssl', SQL_VARCHAR);
+	$sth->bind_param(2, $ssl, SQL_VARCHAR);
+	$sth->execute();
 	
-	
+	$db_handle->commit;
+	$db_handle->disconnect();
 }
 
 
