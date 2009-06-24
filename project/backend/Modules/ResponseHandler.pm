@@ -9,7 +9,20 @@
 #
 #******************************************************************************
 
-package Modules::RequestHandler;
+package Modules::ResponseHandler;
+
+use base qw(Exporter);
+our @EXPORT_OK = qw( RESP_OK, RESP_FAILED, RESP_ERR_DB_OPEN );
+
+use constant RESP_OK => 0;
+use constant RESP_FAILED => -1;
+use constant RESP_ERR_DB_OPEN => -100;
+
+my %responses = (
+	RESP_OK 			=> q/Operation successful!/,
+	RESP_FAILED 		=> q/Operation failed! Unknown reason !/,
+	RESP_ERR_DB_OPEN 	=> q/Failed to open database !/
+);
 
 use strict;
 use warnings;
@@ -34,10 +47,35 @@ sub new {
 
 
 sub response {
-	my ($self, $data) = @_;
+	my ($self, $data, $code, $desc ) = @_;
 	
-	#TODO: create JSON response
+	# create JSON encoded response
+	my $json_data = {
+		'code' => $code,
+		'desc' => $desc,
+		'return' => $data
+	};
+	
+    my $json_obj = JSON::XS->new->allow_nonref(1);
+    my $json_enc = $json_obj->encode($json_data);              
+    #my $json_enc = $json_obj->utf8->encode( $data );
+	
+	return $json_enc;  	
 }
 
+sub response_ok  {
+	my ($self, $data) = @_;
+	return $self->response( $data, RESP_OK, $responses{RESP_OK} );
+}
+
+sub response_fail {
+	my ($self, $msg) = @_;
+	return $self->response( my $data, RESP_FAILED, defined $msg ? $msg : $responses{RESP_FAILED} );	
+}
+
+sub response_error {
+	my ($self, $code) = @_;
+	return $self->response( my $data, $code, $responses{$code} );	
+}
 
 1

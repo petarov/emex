@@ -65,6 +65,7 @@ sub handle_method_get {
 	my ($self,$request) = @_;
 	$logger->trace('handle_method_get(): begin');
 
+    my $uri = URI->new( $self->{uri} );
 	my $response;
 	
 	$_ = $self->{resource};
@@ -77,7 +78,6 @@ sub handle_method_get {
 	}
 	### APP
 	elsif ( /^$resources{R_REGISTER_USER}$/ ) {
-		my $u1 = URI->new( $self->{uri} );
 		#my %k = $u1->query_form  ;
 		#print Dumper( %k );
   		#print $u1->query;    # prints foo=1&foo=2&foo=3
@@ -86,10 +86,9 @@ sub handle_method_get {
 		   #   print "$key: ", $u1->query_param($key), "\n"; 
 		 # }
 		
-		my $mbox = Modules::Mailbox->new( $u1->query_param('name') );
-		$mbox->register('localhost','bai_ivan','143','1'); 
-		$response = form_response_ok( "This is REGISTER request !" );
-		
+		my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+		my $json = $mbox->register('localhost','bai_ivan','143','1'); 
+		$response = form_response_ok( $json );
 	}
 	### NOT FOUND
 	else {

@@ -20,6 +20,7 @@ use Cwd;
 use Log::Log4perl;
 use DBI qw(:sql_types);
 use Logger;
+use ResponseHandler;
 
 use constant DB_PATH => File::Spec->rel2abs( catfile( cwd(), '../../data/db' ) );
 use constant DB_PROTOTYP_PATH => File::Spec->rel2abs( catfile( DB_PATH, 'prototype-acc.s3db' ) );
@@ -36,17 +37,17 @@ sub new {
 	}, $class;
 	
 	$logger->trace( 'created Mailbox : email => ' . $email );
-	$self->_open();
+	$self->_create_or_open();
 		
 	return $self;
 }
 
 # try to open existing database
-sub _open {
+sub _create_or_open {
 	my $self = shift;
 	
 	# get db name
-	my $userdb = $self->_getUserDBPath();
+	my $userdb = $self->_get_user_dbfile();
 	
 	# create OR open 
 	if ( ! -e $userdb ) {
@@ -58,58 +59,61 @@ sub _open {
 		$logger->debug("Database ($userdb) for user $self->{'email'} found !");
 	}
 	
-	my $db_handle = DBI->connect("dbi:SQLite:dbname=$userdb","","") 
-		|| $logger->logdie("Error connecting DBI : $DBI::errstr !");
-				        
+	my $db_handle = $self->_open_database( $userdb );
 	# TODO: nothing needed, right now !
-	$db_handle->disconnect();
+	$db_handle->disconnect() if ( $db_handle );
 }
 
-sub _getUserDBPath {
+sub _get_user_dbfile {
 	my $self = shift;
-	# get db name
+
 	my $userdb_name = $self->{'email'};
 	$userdb_name =~ s/@/__/;
 	$userdb_name .= '.s3db';
-	my $userdb_path = catfile( DB_PATH, $userdb_name );
 	
-	return $userdb_path;
+	return catfile( DB_PATH, $userdb_name );
+}
+
+sub _open_database {
+	my ($self, $db_file, $transactions) = @_;
+	
+	my $db_handle = DBI->connect( "dbi:SQLite:dbname=$db_file", "", "", 
+		{ RaiseError => 0, AutoCommit => $transactions ? 0 : 1 } );
+		
+	if ( $db_handle ) {
+		# set error handler callback
+		$db_handle->{HandleError} = sub {
+			$logger->error("DBI => $_[0]");
+		};		
+	} 
+	else {
+		$logger->error("Error connecting DBI ($db_file) : $DBI::errstr !");
+	}
+	
+	return $db_handle;	
 }
 
 sub register {
 	my ($self, $server, $user, $port, $ssl) = @_;
 
-	my $userdb = $self->_getUserDBPath();
-	my $db_handle = DBI->connect("dbi:SQLite:dbname=$userdb","","", {
-      RaiseError => 0, AutoCommit => 0 } ) 
-      || $logger->logdie("Error connecting DBI : $DBI::errstr !");
-	
-	# write SOMETHING into the DB
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+		|| return Modules::ResponseHandler->new()->response_failed('Failed to open database!');
+
 	my $sth; 
 	
-	$sth = $db_handle->prepare("INSERT INTO settings VALUES (?,?)");
-	$sth->bind_param(1, 'email', SQL_VARCHAR);
-	$sth->bind_param(2, $self->{'email'}, SQL_VARCHAR);
-	$sth->execute();	
+	$sth = $db_handle->prepare("DELETE FROM settings"); # nasty hack, I admit ;)
+	$sth->execute;
 	
-	$sth->bind_param(1, 'server', SQL_VARCHAR);
-	$sth->bind_param(2, $server, SQL_VARCHAR);
-	$sth->execute();	
-	
-	$sth->bind_param(1, 'user', SQL_VARCHAR);
-	$sth->bind_param(2, $user, SQL_VARCHAR);
-	$sth->execute();
-
-	$sth->bind_param(1, 'port', SQL_VARCHAR);
-	$sth->bind_param(2, $port, SQL_VARCHAR);
-	$sth->execute();
-
-	$sth->bind_param(1, 'ssl', SQL_VARCHAR);
-	$sth->bind_param(2, $ssl, SQL_VARCHAR);
-	$sth->execute();
+	$sth = $db_handle->prepare("INSERT INTO settings VALUES (?,?,?)");
+  	$sth->bind_param_array(1, [ 'email', 'server', 'user', 'port', 'ssl' ], SQL_VARCHAR);
+  	$sth->bind_param_array(2, [$self->{'email'}, $server, $user, $port, $ssl ], SQL_VARCHAR);
+  	$sth->bind_param_array(3, time(), SQL_DATETIME ); # scalar will be reused for each row
+	$sth->execute_array( { ArrayTupleStatus => \my @tuple_status } );
 	
 	$db_handle->commit;
 	$db_handle->disconnect();
+	
+	return Modules::ResponseHandler->new()->response_ok();
 }
 
 
