@@ -70,7 +70,10 @@ sub response_ok  {
 
 sub response_fail {
 	my ($self, $msg) = @_;
-	return $self->response( my $data, RESP_FAILED, defined $msg ? $msg : $responses{RESP_FAILED} );	
+	
+	$msg = defined $msg ? $msg : $responses{RESP_FAILED};
+	$logger->trace("response_fail() : $msg");
+	return $self->response( my $data, RESP_FAILED, $msg );	
 }
 
 sub response_error {

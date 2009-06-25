@@ -65,7 +65,6 @@
 		  			$sth->bind_param(2, $imap->get_header($i, "Message-Id"), SQL_VARCHAR);
 		  			$sth->bind_param(3, $imap->get_header($i, "Subject"), SQL_VARCHAR);
 		  			$sth->execute();				
-							    	
 			    }
 			    
 			    $imap->close;		

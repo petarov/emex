@@ -23,6 +23,7 @@ use URI::QueryParam;
 use Data::Dumper;
 use Logger;
 use Mailbox;
+use ResponseHandler;
 
 ### globals
 my $logger = Modules::Logger::create(__PACKAGE__);
@@ -67,6 +68,7 @@ sub handle_method_get {
 
     my $uri = URI->new( $self->{uri} );
 	my $response;
+	my $valid_params = 1;
 	
 	$_ = $self->{resource};
 	### SYSTEM
@@ -74,25 +76,48 @@ sub handle_method_get {
 		$quit_signal = 1;
 	}
 	elsif ( /^$resources{R_TEST}$/ ) {
-		$response = form_response_ok( "This is a test request !" );
+		$response = http_response_ok( "This is a test request !" );
 	}
 	### APP
 	elsif ( /^$resources{R_REGISTER_USER}$/ ) {
-		#my %k = $u1->query_form  ;
-		#print Dumper( %k );
-  		#print $u1->query;    # prints foo=1&foo=2&foo=3
-		  #for my $key ($u1->query_param) {
-		  #   # print "$key: ", join(", ", $u1->query_param($key)), "\n";
-		   #   print "$key: ", $u1->query_param($key), "\n"; 
-		 # }
-		
-		my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
-		my $json = $mbox->register('localhost','bai_ivan','143','1'); 
-		$response = form_response_ok( $json );
+		# register new user database
+		if ( http_validate_params( $uri, qw(email user server port ssl server_type) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->register( $uri->query_param('server'), 
+										$uri->query_param('user'),
+										$uri->query_param('port'),
+										$uri->query_param('ssl'),
+										$uri->query_param('server_type')
+										); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}
 	}
+	elsif ( /^$resources{R_UPDATE_USER_SETTINGS}$/ ) {
+		# update user settings in user's database
+	}
+	elsif ( /^$resources{R_BUILD_MBOX}$/ ) {
+		# build list of contacts
+		if ( http_validate_params( $uri, qw(email) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->build_mbox( $uri->query_param('server') ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}	
 	### NOT FOUND
 	else {
-		$response = form_response_not_found();
+		$response = http_response_not_found();
+	}
+	
+	if ( ! $valid_params ) {
+		$response = http_response_ok( 
+			Modules::ResponseHandler->new()->response_fail('Insufficient or incorrect params!') 
+		);		
 	}
 	
 	return $response;
@@ -114,8 +139,7 @@ sub is_quit_signal {
 	return $quit_signal;
 }
 
-
-sub form_response_ok {
+sub http_response_ok {
 	my ($content) = @_;
 	
 	my $response = HTTP::Response->new( HTTP_OK );
@@ -127,9 +151,22 @@ sub form_response_ok {
 	return $response;
 }
 
-sub form_response_not_found {
+sub http_response_not_found {
 	my $response = HTTP::Response->new( HTTP_NOT_FOUND );
 	return $response;	
 }
 
-1;
+sub http_validate_params {
+	my ($uri, @params_expected) = @_;
+	
+	foreach my $elem (@params_expected) {
+		if ( ! $uri->query_param($elem) ) {
+			#print 'elem:' . $elem . ' keys:' . $uri->query_param($elem) . '\n';
+			$logger->trace('http_validate_params() : Element (' . $elem . ') was not found !');
+			return 0;
+		}
+	}
+	return 1;
+}
+
+1
