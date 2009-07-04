@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "frontend", "frontend\frontend.csproj", "{B91784B2-50A6-42F3-A43F-6BF2667B8015}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "frontend_3_5", "frontend_3_5\frontend_3_5.csproj", "{810FF62E-6F07-49F3-9FCC-7B67F9A90B01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{B91784B2-50A6-42F3-A43F-6BF2667B8015}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B91784B2-50A6-42F3-A43F-6BF2667B8015}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B91784B2-50A6-42F3-A43F-6BF2667B8015}.Release|Any CPU.Build.0 = Release|Any CPU
+		{810FF62E-6F07-49F3-9FCC-7B67F9A90B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{810FF62E-6F07-49F3-9FCC-7B67F9A90B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{810FF62E-6F07-49F3-9FCC-7B67F9A90B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{810FF62E-6F07-49F3-9FCC-7B67F9A90B01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
