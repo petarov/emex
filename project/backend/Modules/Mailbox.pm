@@ -14,6 +14,9 @@ package Modules::Mailbox;
 use strict;
 use warnings;
 
+use Mail::IMAPClient;
+use MIME::Parser;
+use DateTime::Format::DateParse;
 use File::Spec::Functions;
 use File::Copy;
 use Cwd;
@@ -131,7 +134,6 @@ sub build_mbox {
 	#TODO: check SERVER TYPE ?
 	
 	# open user mailbox
-	use Mail::IMAPClient;
 	
     my $host = "127.0.0.1";
     my $id = 'deyan.imap';
@@ -164,30 +166,113 @@ sub build_mbox {
 		$imap->select($folder)
 			or return Modules::ResponseHandler->new()->response_fail('Failed to open mailbox !');
 
-			    # print messages info
-			    print "\n-------------------------------------\n";
-			    for( my $i = 1; $i < $imap->message_count($folder) + 1; $i++ ) {
+		# print messages info
+		my $msg_count = $imap->message_count($folder);
+		if ( ! $msg_count ) {
+			# no messages !
+			$logger->info("Folder $folder is empty !");
+			next;
+		}
+			
+		#print "\n-------------------------------------\n";
+		for( my $i = 1; $i < $msg_count; $i++ ) {
 			    	
+			    	print "\n---------MAIL--------------\n";
 			    	my $hashref = $imap->fetch_hash( "UID", "INTERNALDATE", "RFC822.SIZE" );
-			    	my $uid = $imap->message_uid( $i );
-			    	print "UID:\t $uid \n";
 			    	
-			    	print "FROM:\t" . $imap->get_header($i, "From") . "\n";
+			    	# get IMAP header
+			    	my $uid = $imap->message_uid( $i );
+			    	if ( ! $uid ) {
+			    		$logger->warn("Invalid UID for E-mail with ID=$i in Folder => $folder !");
+			    		next;
+			    	}
+			    	
+			    	# get Email sender
+					$imap->get_header($i, "From") =~ /(.*)<(.*)>/;
+					my $email = "$2";
+					$email = $imap->get_header($i, "From")
+						if ( not $email );	    	
+			    	
+			    	print "UID:\t $uid \n";
+			    	print "FROM:\t" . $imap->get_header($i, "From") . " | REAL => $email \n";
 			    	print "TO:\t" . $imap->get_header($i, "To") . "\n";
-			    	print "CC:\t" . $imap->get_header($i, "Cc") . "\n" if defined $imap->get_header($i, "Cc");
+			    	print "CC:\t" . $imap->get_header($i, "Cc") . "\n" 
+			    		if defined $imap->get_header($i, "Cc");
 			    	print "SUBJECT:\t" . $imap->get_header($i, "Subject") . "\n";
 			    	print "DATE:\t" . $hashref->{$uid}{'INTERNALDATE'} . "\n";
 			    	print "SIZE:\t" . $hashref->{$uid}{'RFC822.SIZE'} . "\n";
+			    	#print "BODY:\t" . $imap->body_string( $uid ) . "\n";
 			    	
-					my $sth = $db_handle->prepare("INSERT INTO EMail VALUES (?,?,?,?,?,?,?,?)");
-  					$sth->bind_param( 3, "$uid", SQL_VARCHAR );
-  					$sth->bind_param( 4, "NQMA", SQL_VARCHAR );
-  					$sth->bind_param( 5, $hashref->{$uid}{'INTERNALDATE'}, SQL_TIMESTAMP );
-  					$sth->bind_param( 6, 1, SQL_INTEGER );
-  					$sth->bind_param( 7, 2.3, SQL_FLOAT );
+			    	# get Message-ID
+			    	my $msgID = $imap->get_header($i, "Message-ID");
+			    	
+			    	# get priority
+			    	my $prio;
+			    	if ( $imap->get_header($i, "X-Priority") ) {
+			    		$imap->get_header($i, "X-Priority") =~ /(.*)(\d)(.*)/;
+			    		$prio = "$2";
+			    	}
+			    	
+			    	# get datetime 
+			    	my $dt = DateTime::Format::DateParse->parse_datetime( $hashref->{$uid}{'INTERNALDATE'} );
+			    	
+			    	#--- insert [Email]
+					my $sth = $db_handle->prepare(qq/INSERT INTO 
+						EMail(id,conversation_id,messageID,uid,inReplyTo,dateRecieved,priority,type,subject) 
+						VALUES(NULL,?,?,?,?,?,?,?,?)/);
+						
+					$sth->bind_param( 1, -1, SQL_INTEGER );
+					$sth->bind_param( 2, $msgID ? $msgID : '', SQL_VARCHAR );
+  					$sth->bind_param( 3, $uid, SQL_INTEGER );
+  					$sth->bind_param( 4, $imap->get_header($i, "In-Reply-To"), SQL_VARCHAR );
+  					$sth->bind_param( 5, $dt, SQL_TIMESTAMP );
+  					$sth->bind_param( 6, $prio ? $prio : 0, SQL_INTEGER );
+  					$sth->bind_param( 7, 1.0, SQL_FLOAT );
   					$sth->bind_param( 8, $imap->get_header($i, "Subject"), SQL_VARCHAR );
 					$sth->execute;	
-			    }					
+					
+					#--- insert [Conversant]
+					$sth = $db_handle->prepare(qq/INSERT INTO 
+						Conversant(id,email) 
+						VALUES(NULL,?)/);
+						
+					$sth->bind_param( 1, $email ? $email : '', SQL_VARCHAR );
+					$sth->execute;	
+					
+					#--- insert [Attachment]
+					
+					my $mp = new MIME::Parser;
+					$mp->ignore_errors(1);
+					$mp->extract_uuencode(1);
+					$mp->decode_headers(1); 
+					
+					my $entity = $mp->parse_data( $imap->body_string( $uid ) );
+					
+   					my $num_parts = $entity->parts;
+   					my @parts = $entity->parts;
+   					
+   					print "PARTS:\t $num_parts \n";
+   					
+   					#if ($num_parts > 0) {
+   						for my $part($entity->parts) {
+   							my $type = $part->mime_type;
+   							
+   							print "TYPE:\t $part->mime_type \n";
+   							
+   							if ( ($type =~ /text/i) || ($type=~ /html/i) ) {
+   								# it's body
+   							}
+   							else {
+   								# attachment
+					            my $mimehead = MIME::Head->new;
+					            my $file_name = $mimehead->recommended_filename;
+					            
+					            print "ATTACHMENT:\t $file_name \n";
+   							}
+   						}
+   					#}
+   					#----
+		}					
 		
 		$imap->close;
     }	
