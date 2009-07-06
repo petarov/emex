@@ -115,7 +115,7 @@ use Time::gmtime;
 
 			my $num_parts = $entity->parts;
 			my @parts     = $entity->parts;
-dx
+
 			print "PARTS:\t $num_parts \n";
 
 			#if ($num_parts > 0) {

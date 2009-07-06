@@ -99,7 +99,7 @@ sub handle_method_get {
 		# update user settings in user's database
 	}
 	elsif ( /^$resources{R_BUILD_MBOX}$/ ) {
-		# build list of contacts
+		# build database from user mailbox
 		if ( http_validate_params( $uri, qw(email) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->build_mbox( $uri->query_param('server') ); 
@@ -108,7 +108,18 @@ sub handle_method_get {
 		else {
 			$valid_params = 0;
 		}		
-	}	
+	}
+	elsif ( /^$resources{R_LIST_USERS}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->list_users(); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}		
 	### NOT FOUND
 	else {
 		$response = http_response_not_found();
