@@ -244,10 +244,10 @@ sub build_mbox {
 					my $mp = new MIME::Parser;
 					$mp->ignore_errors(1);
 					$mp->extract_uuencode(1);
-					$mp->decode_headers(1); 
+					$mp->decode_headers(1);
+					$mp->output_under("../../data/tmp");
 					
-					my $entity = $mp->parse_data( $imap->body_string( $uid ) );
-					
+					my $entity = $mp->parse_data( $imap->bodypart_string($uid) );
    					my $num_parts = $entity->parts;
    					my @parts = $entity->parts;
    					

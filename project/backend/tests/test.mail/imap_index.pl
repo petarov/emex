@@ -109,12 +109,13 @@ use Time::gmtime;
 			$mp->ignore_errors(1);
 			$mp->extract_uuencode(1);
 			$mp->decode_headers(1);
+			$mp->output_under("../../../data/tmp");
 
 			my $entity = $mp->parse_data( $imap->bodypart_string($uid) );
 
 			my $num_parts = $entity->parts;
 			my @parts     = $entity->parts;
-
+dx
 			print "PARTS:\t $num_parts \n";
 
 			#if ($num_parts > 0) {
@@ -127,8 +128,11 @@ use Time::gmtime;
 					print "ATTACHMENT:\t $file_name | $enc | $type \n";
 				}
 			}
-
 			#}
+			
+			# cleanup created files
+			$mp->filer->purge;
+			
 			#----
 		}
 
