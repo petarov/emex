@@ -21,7 +21,7 @@ use Time::gmtime;
 		Server   => $host,
 		User     => $id,
 		Password => $pass,
-		Uid      => 1,
+		Uid      => 0, # problem ?
 		Clear    => 5,
 
 		#Debug   	=> 1,
@@ -60,7 +60,7 @@ use Time::gmtime;
 			
 			print "\n---------MAIL--------------\n";
 			my $hashref =
-			  $imap->fetch_hash( "UID", "INTERNALDATE", "RFC822.SIZE" );
+			  $imap->fetch_hash( "UID", "INTERNALDATE", "RFC822.SIZE", "BODY.PEEK" );
 
 			# get IMAP header
 			my $uid = $imap->message_uid($i);
@@ -81,11 +81,11 @@ use Time::gmtime;
 			  . " | REAL => $email \n";
 			print "TO:\t" . $imap->get_header( $i, "To" ) . "\n";
 			print "CC:\t" . $imap->get_header( $i, "Cc" ) . "\n"
-			  if defined $imap->get_header( $i,    "Cc" );
+			  if defined $imap->get_header( $i, "Cc" );
 			print "SUBJECT:\t" . $imap->get_header( $i, "Subject" ) . "\n";
 			print "DATE:\t" . $hashref->{$uid}{'INTERNALDATE'} . "\n";
 			print "SIZE:\t" . $hashref->{$uid}{'RFC822.SIZE'} . "\n";
-
+			#print "BODY:\t" . $imap->body_string($uid) . "\n";
 			#print "BODY:\t" . $imap->body_string( $uid ) . "\n";
 
 			# get Message-ID
@@ -118,9 +118,23 @@ use Time::gmtime;
 
 			print "PARTS:\t $num_parts \n";
 
-			#if ($num_parts > 0) {
-			for my $part ( $entity->parts ) {
-				if ( $part->mime_type ) {
+			if ($num_parts > 0) {
+				my $j = 0;
+				for my $part ( $entity->parts ) {
+					if ( 0 == $j++ ) {
+						print "\nPrinting body ....\n";
+						# print body
+						my $bodydata = $part->bodyhandle->as_string;
+			            #if (my $io = $part->open("r")) {
+			            #    while (defined($_ = $io->getline)) {
+			            #        $bodydata .= $_;
+			            #    }
+		                #$io->close;
+			            #}			
+			            print "BODY:\t $bodydata \n";			
+						next;
+					}
+					
 					# attachment
 					my $type = $part->mime_type;
 					my $enc = $part->head->mime_encoding;
@@ -128,7 +142,17 @@ use Time::gmtime;
 					print "ATTACHMENT:\t $file_name | $enc | $type \n";
 				}
 			}
-			#}
+			else {
+				# just body
+				my $bodydata;
+	            if (my $io = $entity->open("r")) {
+	                while (defined($_ = $io->getline)) {
+	                    $bodydata .= $_;
+	                }
+                $io->close;
+	            }
+	            print "BODY:\t $bodydata \n";	
+			}
 			
 			# cleanup created files
 			$mp->filer->purge;
