@@ -527,7 +527,7 @@ sub send_mail {
 	
 	my $smtp = Net::SMTP->new( $host,
 								Timeout => 60 );
-    $smtp->mail( $user );
+    $smtp->mail( $self->{'email'} );
     $smtp->to( $params{'TO'} );
     $smtp->data();
     $smtp->datasend("From: $self->{'email'} \n");
