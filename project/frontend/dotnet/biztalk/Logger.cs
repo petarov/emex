@@ -14,7 +14,7 @@ namespace biztalk
         public void init()
         {
             XmlConfigurator.Configure(new System.IO.FileInfo("biztalk_appender.xml"));
-            log.Info("Biztalk configured.");
+            log.Info("EmEx Biztalk logger configured.");
         }
     }
 }

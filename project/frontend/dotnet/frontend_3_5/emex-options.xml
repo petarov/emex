@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<emex-options>
+  <backend>
+    <server>127.0.0.1</server>
+    <port>8080</port>
+  </backend>
+  <account>
+    <address>deyan.imap@localhost</address>
+  </account>
+</emex-options>
