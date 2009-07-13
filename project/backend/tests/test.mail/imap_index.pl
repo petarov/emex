@@ -23,18 +23,15 @@ use Time::gmtime;
 		Password => $pass,
 		Uid      => 0, # problem ?
 		Clear    => 5,
-
 		#Debug   	=> 1,
 	  )
-	  or return Modules::ResponseHandler->new()
-	  ->response_fail('Failed to connect to IMAP server!');
+	  or die('Failed to connect to IMAP server!');
 
 	#my $Authenticated = $imap->Authenticated();
 	#my $Connected = $imap->Connected();
 
 	my @folders = $imap->folders
-	  or return Modules::ResponseHandler->new()
-	  ->response_fail("List folders error: $imap->LastError !");
+	  or die("List folders error: $imap->LastError !");
 
 	foreach my $folder (@folders) {
 		print "MAP : opening folder $folder with "
@@ -43,8 +40,7 @@ use Time::gmtime;
 
 		# open mailbox
 		$imap->select($folder)
-		  or return Modules::ResponseHandler->new()
-		  ->response_fail('Failed to open mailbox !');
+		  or die('Failed to open mailbox !');
 
 		# print messages info
 		my $msg_count = $imap->message_count($folder);
@@ -59,8 +55,8 @@ use Time::gmtime;
 		for ( my $i = 1 ; $i < $msg_count ; $i++ ) {
 			
 			print "\n---------MAIL--------------\n";
-			my $hashref =
-			  $imap->fetch_hash( "UID", "INTERNALDATE", "RFC822.SIZE", "BODY.PEEK" );
+			my $hashref = {};
+			$imap->fetch_hash( "UID", "INTERNALDATE", "RFC822.SIZE", $hashref );
 
 			# get IMAP header
 			my $uid = $imap->message_uid($i);
@@ -85,6 +81,15 @@ use Time::gmtime;
 			print "SUBJECT:\t" . $imap->get_header( $i, "Subject" ) . "\n";
 			print "DATE:\t" . $hashref->{$uid}{'INTERNALDATE'} . "\n";
 			print "SIZE:\t" . $hashref->{$uid}{'RFC822.SIZE'} . "\n";
+			
+			# get BODY words !
+            #my @words = split(/\W/, $imap->body_string($uid) );
+            #print "BODY:\t";
+            #foreach my $word (@words) {
+            #	print "$word,"
+            #		if ( length($word) >= 3 );
+            #}
+            #print "\n";
 			#print "BODY:\t" . $imap->body_string($uid) . "\n";
 			#print "BODY:\t" . $imap->body_string( $uid ) . "\n";
 
@@ -131,7 +136,12 @@ use Time::gmtime;
 			            #    }
 		                #$io->close;
 			            #}			
-			            print "BODY:\t $bodydata \n";			
+			            my @words = split(/\W/, $bodydata);
+			            print "--BODY --2--\t";
+			            foreach my $word (@words) {
+			            	print "$word,"
+			            		if ( length($word) >= 3 );
+			            }			            	
 						next;
 					}
 					
@@ -151,7 +161,13 @@ use Time::gmtime;
 	                }
                 $io->close;
 	            }
-	            print "BODY:\t $bodydata \n";	
+	            #print "BODY:\t $bodydata \n";
+	            my @words = split(/\W/, $bodydata);
+	            print "--BODY\t";
+	            foreach my $word (@words) {
+	            	print "$word,"
+	            		if ( length($word) >= 3 );
+	            }
 			}
 			
 			# cleanup created files

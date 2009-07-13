@@ -16,6 +16,7 @@ use warnings;
 
 use Mail::IMAPClient;
 use MIME::Parser;
+use Net::SMTP;
 use DateTime::Format::DateParse;
 use File::Spec::Functions;
 use File::Copy;
@@ -103,6 +104,41 @@ sub _open_database {
 	return $db_handle;
 }
 
+sub clear {
+	my ( $self ) = @_;
+	
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return 0;
+	  
+	my $sth = $db_handle->prepare("DELETE FROM Attachment");
+	$sth->execute;	  
+	$sth = $db_handle->prepare("DELETE FROM Conversant");
+	$sth->execute;	  
+	$sth = $db_handle->prepare("DELETE FROM Conversation");
+	$sth->execute;	  	
+	$sth = $db_handle->prepare("DELETE FROM EMail");
+	$sth->execute;	  	
+	$sth = $db_handle->prepare("DELETE FROM EMailTags");
+	$sth->execute;	  	
+	$sth = $db_handle->prepare("DELETE FROM Folder");
+	$sth->execute;	
+	$sth = $db_handle->prepare("DELETE FROM RelConversantToEMail");
+	$sth->execute;	
+	$sth = $db_handle->prepare("DELETE FROM RelMailTagToEMail");
+	$sth->execute;	
+	$sth = $db_handle->prepare("DELETE FROM RelSearchTagToEMail");
+	$sth->execute;	
+	$sth = $db_handle->prepare("DELETE FROM SearchTags");
+	$sth->execute;	
+		
+	# close DB
+	$db_handle->commit
+		or return 0;
+	$db_handle->disconnect();	
+	
+	return 1;
+}
+
 sub register {
 	my ( $self, $server, $user, $port, $ssl, $server_type ) = @_;
 
@@ -130,8 +166,32 @@ sub register {
 	return Modules::ResponseHandler->new()->response_ok();
 }
 
+sub get_settings {
+	my ($self, $db_handle) = @_;
+	
+	my ($host,$port,$user,$ssl,$server_type);
+	
+	my $sth = $db_handle->prepare( qq/SELECT key,value FROM Settings/ );
+	$sth->execute;
+	my @row;
+	print "ROWS: " . @row;
+	while( @row = $sth->fetchrow_array ) {
+		$host = $row[1] if ( $row[0] eq 'server' );
+		$port = $row[1] if ( $row[0] eq 'port' );
+		$user = $row[1] if ( $row[0] eq 'user' );
+		$ssl = $row[1] if ( $row[0] eq 'ssl' );
+		$server_type = $row[1] if ( $row[0] eq 'server_type' );
+	}
+	
+	return ($host,$port,$user,$ssl,$server_type);
+}
+
+
 sub build_mbox {
 	my ($self) = @_;
+	
+	# just clean up everything from the current DB
+	$self->clear();
 
 	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
 	  or return Modules::ResponseHandler->new()
@@ -139,15 +199,17 @@ sub build_mbox {
 
 	#TODO: check SERVER TYPE ?
 
-	# open user mailbox
-
-	my $host = "127.0.0.1";
-	my $id   = 'deyan.imap';
+	my ($host,$port,$user,$ssl,$server_type) = $self->get_settings( $db_handle );
 	my $pass = "123";
-
+	#if ( ! @row ) {
+	#	return Modules::ResponseHandler->new()->response_fail('User settings are missing !');		
+	#}
+	
+	# open user mailbox
+	
 	my $imap = Mail::IMAPClient->new(
 		Server   => $host,
-		User     => $id,
+		User     => $user,
 		Password => $pass,
 		Uid      => 0,       #Problems !?
 		Clear    => 5,
@@ -171,6 +233,12 @@ sub build_mbox {
 			  . $imap->message_count($folder)
 			  . " messages ." )
 		  if ( $logger->is_debug() );
+		
+		#skip (SENT) folder  
+		if ( $folder eq 'Sent' ) {
+			$logger->debug('Skipping SENT folder ...');
+			next;
+		}
 
 		# open mailbox
 		$imap->select($folder)
@@ -205,17 +273,18 @@ sub build_mbox {
 			my $email = "$2";
 			$email = $imap->get_header( $i, "From" )
 			  if ( not $email );
+			  
+			my $subject = $imap->get_header( $i, "Subject" ) ? $imap->get_header( $i, "Subject" ) : '(No Subject)';
 
 			print "UID:\t $uid \n";
 			print "FROM:\t" . $imap->get_header( $i, "From" ) . " | REAL => $email \n";
 			print "TO:\t" . $imap->get_header( $i, "To" ) . "\n";
 			print "CC:\t" . $imap->get_header( $i, "Cc" ) . "\n"
 			  if defined $imap->get_header( $i, "Cc" );
-			print "SUBJECT:\t" . $imap->get_header( $i, "Subject" ) . "\n";
-			print "BODY:\t" . $imap->body_string( $uid ) . "\n";
+			print "SUBJECT:\t" . $subject . "\n";
+			#print "BODY:\t" . $imap->body_string( $uid ) . "\n";
 			#print "DATE:\t" . $hashref->{$uid}{'INTERNALDATE'} . "\n";
 			#print "SIZE:\t" . $hashref->{$uid}{'RFC822.SIZE'} . "\n";
-			#print "BODY:\t" . $imap->body_string( $uid ) . "\n";
 
 			# get Message-ID
 			my $msgID = $imap->get_header( $i, "Message-ID" );
@@ -247,7 +316,7 @@ sub build_mbox {
 			$sth->bind_param( 5, $dt, SQL_TIMESTAMP );
 			$sth->bind_param( 6, $prio ? $prio : 0, SQL_INTEGER );
 			$sth->bind_param( 7, 1.0, SQL_FLOAT );
-			$sth->bind_param( 8, $imap->get_header( $i, "Subject" ), SQL_VARCHAR );
+			$sth->bind_param( 8, $subject, SQL_VARCHAR );
 			$sth->execute;
 
 			$sth = $db_handle->prepare(qq/SELECT MAX(id) FROM EMail/);
@@ -286,45 +355,95 @@ sub build_mbox {
 			my $entity    = $mp->parse_data( $imap->bodypart_string($uid) );
 			my $num_parts = $entity->parts;
 			my @parts     = $entity->parts;
-
 			#print "PARTS:\t $num_parts \n";
 
 			my $j = 0;
-			for my $part ( $entity->parts ) {
-
-				# first part is (always??) a body
-				next if $j++ == 0;
-
-				# attachment
-				my $type      = $part->mime_type;
-				my $enc       = $part->head->mime_encoding;
-				my $file_name = $part->head->recommended_filename;
-				print "ATTACHMENT:\t $file_name | $enc | $type \n";
-
-				#print "TYPE:\t $part->mime_type \n";
-				#print "ATTACHMENT:\t $file_name \n";
-
-				$sth = $db_handle->prepare(
-					qq/INSERT INTO 
-								Attachment(id,folder_id,email_id,conversant_id,name,type) 
-								VALUES(NULL,NULL,?,?,?,?)/
-				);
-
-				$sth->bind_param( 1, $email_id,      SQL_INTEGER );
-				$sth->bind_param( 2, $conversant_id, SQL_INTEGER );
-				$sth->bind_param( 3, $file_name ? $file_name : 'unknown',
-					SQL_VARCHAR );
-				$sth->bind_param( 4, $type, SQL_VARCHAR );
-				$sth->execute;
-
-				# clean up extracted attachment
-				$mp->filer->purge;
+			my $bodydata;
+			
+			if ($num_parts > 0) {
+				for my $part ( $entity->parts ) {
+	
+					# first part is (always??) a body
+					if ( $j++ == 0 ) {
+						$bodydata = $part->bodyhandle->as_string;
+						next;
+					}
+	
+					# attachment
+					my $type      = $part->mime_type;
+					my $enc       = $part->head->mime_encoding;
+					my $file_name = $part->head->recommended_filename;
+					print "ATTACHMENT INFO:\t $file_name | $enc | $type \n";
+	
+					$sth = $db_handle->prepare(
+						qq/INSERT INTO 
+									Attachment(id,folder_id,email_id,conversant_id,name,type) 
+									VALUES(NULL,NULL,?,?,?,?)/
+					);
+	
+					$sth->bind_param( 1, $email_id,      SQL_INTEGER );
+					$sth->bind_param( 2, $conversant_id, SQL_INTEGER );
+					$sth->bind_param( 3, $file_name ? $file_name : 'unknown',
+						SQL_VARCHAR );
+					$sth->bind_param( 4, $type, SQL_VARCHAR );
+					$sth->execute;
+	
+					# clean up extracted attachment
+					$mp->filer->purge;
+				}
+			}
+			else {
+				# NO ATTACHMENTS ! Just get the body
+	            if (my $io = $entity->open("r")) {
+	                while (defined($_ = $io->getline)) {
+	                    $bodydata .= $_;
+	                }
+                	$io->close;
+	            }				
 			}
 			
 			#--- insert [SearchTags]
+			if ( $bodydata ) {
+	            my @words = split(/\W/, $bodydata );
+	            foreach my $word (@words) {
+		            if ( length($word) >= 3 ) { # Insert at least 3-letter words
+						$sth = $db_handle->prepare( qq/SELECT id FROM SearchTags WHERE data=?/ );
+						$sth->bind_param( 1, $word, SQL_VARCHAR );
+						$sth->execute;	
+						my @row = $sth->fetchrow_array;
+						if ( @row ) {
+							my $tag_id = $row[0];							
+							# increase depth
+							$sth = $db_handle->prepare( qq/UPDATE SearchTags SET depth=depth + 1 WHERE id=?/ );
+							$sth->bind_param( 1, $tag_id, SQL_INTEGER );
+							$sth->execute;				
+						}
+						else {
+							# tag DOES NOT EXIST
+							$sth = $db_handle->prepare( qq/INSERT INTO SearchTags(id,depth,data) VALUES(NULL,1,?)/ );
+							$sth->bind_param( 1, $word, SQL_VARCHAR );
+							$sth->execute;
+							
+							# create EMail->Tag relation
+							$sth = $db_handle->prepare( qq/SELECT MAX(id) FROM SearchTags/ );
+							$sth->execute;
+							my @row      = $sth->fetchrow_array;
+							my $tag_id = $row[0];
+							
+							$sth = $db_handle->prepare(
+								qq/INSERT INTO 
+											RelSearchTagToEMail(id,tag_id,email_id) 
+											VALUES(NULL,?,?)/
+							);
+							$sth->bind_param( 1, $tag_id, SQL_INTEGER );
+							$sth->bind_param( 2, $email_id, SQL_INTEGER );
+							$sth->execute;	
+						}
+	            	}            	
+	            }
+			}
 			
-			
-			
+			# NEXT ...
 		}
 
 		$imap->close;
@@ -348,15 +467,78 @@ sub list_users {
 	  or return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to open database!');
 	  
-	my $sth = $db_handle->prepare(qq/SELECT * FROM Conversant;/);
+	my $sth = $db_handle->prepare(qq/SELECT * FROM Conversant/);
 	$sth->execute;
 	
 	my $hash_ref = $sth->fetchall_hashref('id');
 	#use Data::Dumper;
 	#print Dumper( $hash_ref );
 	$db_handle->disconnect();	  
-
 	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
+}
+
+sub list_attachments {
+	my ($self) = @_;
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	my $sth = $db_handle->prepare(qq/SELECT * FROM Attachment/);
+	$sth->execute;
+	
+	my $hash_ref = $sth->fetchall_hashref('id');
+	#use Data::Dumper;
+	#print Dumper( $hash_ref );
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
+}
+
+sub search {
+	my ($self, $word) = @_;
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	my $sth = $db_handle->prepare(qq/SELECT id,data 
+			FROM SearchTags 
+			WHERE data LIKE '%$word%' 
+			ORDER BY depth/);
+	$sth->execute;
+	
+	my $hash_ref = $sth->fetchall_hashref('id');
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
+}
+
+sub send_mail {
+	my ($self, %params ) = @_;
+	#use Data::Dumper;
+	#print Dumper( %params );
+	
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');	
+	
+	my ($host,$port,$user,$ssl,$server_type) = $self->get_settings( $db_handle ); 
+	
+	$db_handle->disconnect();	 
+	
+	my $smtp = Net::SMTP->new( $host,
+								Timeout => 60 );
+    $smtp->mail( $user );
+    $smtp->to( $params{'TO'} );
+    $smtp->data();
+    $smtp->datasend("From: $self->{'email'} \n");
+    $smtp->datasend("To: $params{'TO'}\n");
+    $smtp->datasend("Subject: $params{'SUBJECT'}\n");
+    $smtp->datasend("\n");
+    $smtp->datasend("A simple test message\n");
+    $smtp->dataend();
+    $smtp->quit;    
+    
+    return Modules::ResponseHandler->new()->response_ok();	  
 }
 
 

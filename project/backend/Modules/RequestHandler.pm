@@ -45,6 +45,7 @@ my %resources = (
 	R_SEARCH_EMAIL => '/search_email',
 	R_CREATE_TAG => '/create_tag',
 	R_REMOVE_TAG => '/remove_tag',
+	R_PING => '/ping'
 	
 );
 
@@ -119,7 +120,46 @@ sub handle_method_get {
 		else {
 			$valid_params = 0;
 		}		
+	}	
+	elsif ( /^$resources{R_LIST_ATTACHMENTS}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->list_attachments(); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}
+	elsif ( /^$resources{R_SEARCH_EMAIL}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email word) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->search( $uri->query_param('word') ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}
+	elsif ( /^$resources{R_SEND_EMAIL}$/ ) {
+		if ( http_validate_params( $uri, qw(email to subject) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->send_mail( 
+				'TO' => $uri->query_param('to'),
+				'SUBJECT' => $uri->query_param('subject'),
+				 ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}
 	}		
+	elsif ( /^$resources{R_PING}$/ ) {
+		$response = http_response_ok( 
+			Modules::ResponseHandler->new()->response_ok() );
+	}	
 	### NOT FOUND
 	else {
 		$response = http_response_not_found();
