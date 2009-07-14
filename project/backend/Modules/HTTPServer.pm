@@ -14,6 +14,8 @@ use strict;
 use warnings;
 
 use HTTP::Daemon;
+use HTTP::Request;
+use HTTP::Message;
 use HTTP::Status qw(:constants );
 use Logger;
 use RequestHandler;
@@ -61,7 +63,8 @@ sub start {
   				$client->send_response( $resp );
   			}
   			elsif( $req->method eq 'POST' ) {
-  				my $req = Modules::RequestHandler->new( $req->url->path );
+  				my $full_uri = $req->uri . '/?' .$req->content;  # just simulate like GET request
+  				my $req = Modules::RequestHandler->new( $full_uri, $req->url->path );
   				my $resp = $req->handle_method_post();
   				$client->send_response( $resp );
   			}

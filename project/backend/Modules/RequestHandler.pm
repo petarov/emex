@@ -82,13 +82,17 @@ sub handle_method_get {
 	### APP
 	elsif ( /^$resources{R_REGISTER_USER}$/ ) {
 		# register new user database
-		if ( http_validate_params( $uri, qw(email user server port ssl server_type) ) ) {
+		if ( http_validate_params( $uri, qw(email username full_name incoming_server incoming_port server_type smtp_server smtp_port smtp_security) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
-			my $json = $mbox->register( $uri->query_param('server'), 
-										$uri->query_param('user'),
-										$uri->query_param('port'),
-										$uri->query_param('ssl'),
-										$uri->query_param('server_type')
+			my $json = $mbox->register( $uri->query_param('username'), 
+										$uri->query_param('full_name'),
+										$uri->query_param('incoming_server'),
+										$uri->query_param('incoming_port'),
+										$uri->query_param('server_type'),
+										$uri->query_param('smtp_server'),
+										$uri->query_param('smtp_port'),
+										$uri->query_param('smtp_username'),
+										$uri->query_param('smtp_security')
 										); 
 			$response = http_response_ok( $json );
 		}
@@ -142,25 +146,12 @@ sub handle_method_get {
 		else {
 			$valid_params = 0;
 		}		
-	}
-	elsif ( /^$resources{R_SEND_EMAIL}$/ ) {
-		if ( http_validate_params( $uri, qw(email to subject) ) ) {
-			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
-			my $json = $mbox->send_mail( 
-				'TO' => $uri->query_param('to'),
-				'SUBJECT' => $uri->query_param('subject'),
-				 ); 
-			$response = http_response_ok( $json );
-		}
-		else {
-			$valid_params = 0;
-		}
 	}		
 	elsif ( /^$resources{R_PING}$/ ) {
 		$response = http_response_ok( 
 			Modules::ResponseHandler->new()->response_ok() );
 	}	
-	### NOT FOUND
+	### 404 NOT FOUND
 	else {
 		$response = http_response_not_found();
 	}
@@ -178,8 +169,39 @@ sub handle_method_get {
 sub handle_method_post {
 	my ($self) = @_;
 	$logger->trace('handle_method_post(): begin');
-		
-	#TODO:
+	
+    my $uri = URI->new( $self->{uri} );
+	my $response;
+	my $valid_params = 1;
+	
+	$_ = $self->{resource};
+
+	if ( /^$resources{R_SEND_EMAIL}$/ ) {
+		if ( http_validate_params( $uri, qw(email to subject body) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->send_mail( 
+				'TO' => $uri->query_param('to'),
+				'SUBJECT' => $uri->query_param('subject'),
+				'BODY' => $uri->query_param('body')
+				 ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}
+	}	
+	### 404 NOT FOUND
+	else {
+		$response = http_response_not_found();
+	}	
+	
+	if ( ! $valid_params ) {
+		$response = http_response_ok( 
+			Modules::ResponseHandler->new()->response_fail('Insufficient or incorrect params!') 
+		);		
+	}
+	
+	return $response;	
 }
 
 sub is_quit_signal {

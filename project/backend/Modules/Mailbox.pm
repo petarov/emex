@@ -140,8 +140,8 @@ sub clear {
 }
 
 sub register {
-	my ( $self, $server, $user, $port, $ssl, $server_type ) = @_;
-
+	my ( $self, $username, $full_name, $incoming_server, $incoming_port, $server_type, $smtp_server, $smtp_port, $smtp_username, $smtp_security ) = @_;
+	
 	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
 	  || return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to open database!');
@@ -152,10 +152,10 @@ sub register {
 	#print "TIME:" . DateTime::Format::DateParse->parse_datetime( DateTime->now() );;
 	$sth = $db_handle->prepare( "INSERT INTO settings (key,value,last_update) VALUES (?,?,CURRENT_TIMESTAMP)" );
 	$sth->bind_param_array( 1,
-		[ 'email', 'server', 'user', 'port', 'ssl', 'server_type' ],
+		[ qw(email username full_name incoming_server incoming_port server_type smtp_server smtp_port smtp_username smtp_security) ],
 		SQL_VARCHAR );
 	$sth->bind_param_array( 2,
-		[ $self->{'email'}, $server, $user, $port, $ssl, $server_type ],
+		[ $self->{'email'}, $username, $full_name, $incoming_server, $incoming_port, $server_type, $smtp_server, $smtp_port, $smtp_username, $smtp_security ],
 		SQL_VARCHAR );
 	#$sth->bind_param_array(3, DateTime::Format::DateParse->parse_datetime( DateTime->now() ), SQL_TIMESTAMP ); # scalar will be reused for each row
 	$sth->execute_array( { ArrayTupleStatus => \my @tuple_status } );
@@ -176,10 +176,10 @@ sub get_settings {
 	my @row;
 	print "ROWS: " . @row;
 	while( @row = $sth->fetchrow_array ) {
-		$host = $row[1] if ( $row[0] eq 'server' );
-		$port = $row[1] if ( $row[0] eq 'port' );
-		$user = $row[1] if ( $row[0] eq 'user' );
-		$ssl = $row[1] if ( $row[0] eq 'ssl' );
+		$host = $row[1] if ( $row[0] eq 'incoming_server' );
+		$port = $row[1] if ( $row[0] eq 'incoming_port' );
+		$user = $row[1] if ( $row[0] eq 'username' );
+		$ssl = $row[1] if ( $row[0] eq 'smtp_security' );
 		$server_type = $row[1] if ( $row[0] eq 'server_type' );
 	}
 	
@@ -470,7 +470,7 @@ sub list_users {
 	my $sth = $db_handle->prepare(qq/SELECT * FROM Conversant/);
 	$sth->execute;
 	
-	my $hash_ref = $sth->fetchall_hashref('id');
+	my $hash_ref = $sth->fetchall_arrayref({});
 	#use Data::Dumper;
 	#print Dumper( $hash_ref );
 	$db_handle->disconnect();	  
@@ -507,7 +507,7 @@ sub search {
 			ORDER BY depth/);
 	$sth->execute;
 	
-	my $hash_ref = $sth->fetchall_hashref('id');
+	my $hash_ref = $sth->fetchall_arrayref({}); #$sth->fetchall_hashref('id');
 	$db_handle->disconnect();	  
 	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
 }
@@ -526,7 +526,8 @@ sub send_mail {
 	$db_handle->disconnect();	 
 	
 	my $smtp = Net::SMTP->new( $host,
-								Timeout => 60 );
+							   Timeout => 60 );
+								
     $smtp->mail( $self->{'email'} );
     $smtp->to( $params{'TO'} );
     $smtp->data();
@@ -535,6 +536,8 @@ sub send_mail {
     $smtp->datasend("Subject: $params{'SUBJECT'}\n");
     $smtp->datasend("\n");
     $smtp->datasend("A simple test message\n");
+    $smtp->datasend("\n");
+    $smtp->datasend("$params{'BODY'}\n");
     $smtp->dataend();
     $smtp->quit;    
     
