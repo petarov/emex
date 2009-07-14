@@ -71,7 +71,7 @@ namespace frontend_3_5.BizTalk
         {
             get
             {
-                return hashSettings["configured"] != null && Convert.ToBoolean(hashSettings["configured"]);
+                return hashSettings["configured"] != null && (string)hashSettings["configured"] == "true";
             }
         }
 

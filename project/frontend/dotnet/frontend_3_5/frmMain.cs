@@ -18,6 +18,16 @@ namespace frontend_3_5
 {
     public partial class frmMain : Form
     {
+        public void Refresh2()
+        {
+            Result res = Bootstrap.Instance().Talker.GetContacts();
+            foreach (Hashtable t in res.return_)
+            {
+                this.listView1.Items.Add(new ListViewItem((string)t["email"]));
+            }
+        }
+
+        // -----------
 
         public frmMain()
         {
@@ -52,8 +62,13 @@ namespace frontend_3_5
                     Bootstrap.Instance().Settings.Reload();
                     Bootstrap.Instance().start();
 
+                    // register user
                     Hashtable bizSettings = wizAccount.AccountInfo;
                     Result res = Bootstrap.Instance().Talker.RegisterUser(bizSettings);
+                    ErrorHandler.checkBizResult(res);
+
+                    // rebuild mailbox
+                    res = Bootstrap.Instance().Talker.BuildMbox();
                     ErrorHandler.checkBizResult(res);
                 }
                 else
@@ -84,13 +99,6 @@ namespace frontend_3_5
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            frmWizAccount wiz1 = new frmWizAccount();
-            wiz1.ShowDialog(this);
-            
-        }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -101,8 +109,19 @@ namespace frontend_3_5
             Result res = Bootstrap.Instance().Talker.GetContacts();
             foreach (Hashtable t in res.return_)
             {
-                this.listView1.Items.Add(new ListViewItem( (string)t["email"] ));
+                this.listView1.Items.Add(new ListViewItem((string)t["email"]));
             }
+        }
+
+        private void reconfigureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void exitToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            //TODO: confirm
+            this.Close();
         }
     }
 }

@@ -60,9 +60,65 @@ namespace frontend_3_5.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap footer_bg {
+            get {
+                object obj = ResourceManager.GetObject("footer_bg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap footer_bg1 {
+            get {
+                object obj = ResourceManager.GetObject("footer_bg1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap go_btn {
+            get {
+                object obj = ResourceManager.GetObject("go_btn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap header_bg {
+            get {
+                object obj = ResourceManager.GetObject("header_bg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap header_img {
+            get {
+                object obj = ResourceManager.GetObject("header_img", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap icons_test_export {
             get {
                 object obj = ResourceManager.GetObject("icons-test-export", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap logo {
+            get {
+                object obj = ResourceManager.GetObject("logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap new_mail_btn {
+            get {
+                object obj = ResourceManager.GetObject("new_mail_btn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap refresh_btn {
+            get {
+                object obj = ResourceManager.GetObject("refresh_btn", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

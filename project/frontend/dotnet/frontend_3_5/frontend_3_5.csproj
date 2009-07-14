@@ -59,6 +59,12 @@
   <ItemGroup>
     <Compile Include="BizTalk\Settings.cs" />
     <Compile Include="BizTalk\Talker.cs" />
+    <Compile Include="frmStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmStatus.Designer.cs">
+      <DependentUpon>frmStatus.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmWizGeneral.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,8 +84,13 @@
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Proc\Bootstrap.cs" />
+    <Compile Include="Proc\UIWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="frmStatus.resx">
+      <DependentUpon>frmStatus.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmWizGeneral.resx">
       <DependentUpon>frmWizGeneral.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -120,7 +131,6 @@
   <ItemGroup>
     <None Include="emex-options.xml.template" />
     <Content Include="frontend_appender.xml" />
-    <Content Include="emex-options.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

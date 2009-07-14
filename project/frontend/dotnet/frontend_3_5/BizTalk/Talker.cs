@@ -27,13 +27,20 @@ namespace frontend_3_5.BizTalk
 
         public Result RegisterUser( Hashtable hashAccountInfo )
         {
-            return this.session.JSON2Result(
-                this.session.request(
-                        Session.RequestType.RT_GET,
-                        "register_user",
-                        hashAccountInfo
-                        )
-                    );
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "register_user",
+                hashAccountInfo);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result BuildMbox()
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "build_mbox",
+                "email", this.session.UserMail );
+            return this.session.JSON2Result(json);
         }
 
         public Result GetContacts()

@@ -13,7 +13,7 @@ namespace biztalk
 {
     public class Session
     {
-        private const int TIMEOUT   = 5000;
+        private const int TIMEOUT   = 60000;
         private const string SCHEME = "http";
         private const string USER_AGENT = "EmEx FrontEnd Biztalk";
 
