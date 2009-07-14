@@ -11,13 +11,13 @@ using System.Windows.Forms;
 using log4net;
 using biztalk;
 using frontend_3_5.BizTalk;
+using frontend_3_5.Proc;
+using frontend_3_5.Utils;
 
 namespace frontend_3_5
 {
     public partial class frmMain : Form
     {
-        private BizTalk.Settings settings;
-        private BizTalk.Talker talker;
 
         public frmMain()
         {
@@ -26,8 +26,47 @@ namespace frontend_3_5
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            // startup
 
+            try
+            {
+                Bootstrap.Instance().configure();
 
+                // configure backend & frontend
+
+                if ( ! Bootstrap.Instance().Settings.IsConfigured )
+                {
+                    frmWizGeneral wizGeneral = new frmWizGeneral();
+                    if (DialogResult.Cancel == wizGeneral.ShowDialog())
+                        throw new Exception("EmEx cannot start without configuration!");
+                }
+
+                // create/configure account (if not existing)
+
+                if ( ! Bootstrap.Instance().Settings.IsAccountConfigured )
+                {
+                    frmWizAccount wizAccount = new frmWizAccount();
+                    if (DialogResult.Cancel == wizAccount.ShowDialog(this))
+                        throw new Exception("EmEx cannot start without configuring an account!");
+
+                    Bootstrap.Instance().Settings.Reload();
+                    Bootstrap.Instance().start();
+
+                    Hashtable bizSettings = wizAccount.AccountInfo;
+                    Result res = Bootstrap.Instance().Talker.RegisterUser(bizSettings);
+                    ErrorHandler.checkBizResult(res);
+                }
+                else
+                {
+                    Bootstrap.Instance().start();
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                new ErrorHandler(ex).Error();
+                this.Close();
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -47,7 +86,7 @@ namespace frontend_3_5
 
         private void button4_Click(object sender, EventArgs e)
         {
-            frmAccountWiz1 wiz1 = new frmAccountWiz1();
+            frmWizAccount wiz1 = new frmWizAccount();
             wiz1.ShowDialog(this);
             
         }
@@ -59,11 +98,7 @@ namespace frontend_3_5
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //TODO:
-            settings = new Settings("emex-options.xml");
-            talker = new Talker(this.settings);
-
-            Result res = this.talker.GetContacts();
+            Result res = Bootstrap.Instance().Talker.GetContacts();
             foreach (Hashtable t in res.return_)
             {
                 this.listView1.Items.Add(new ListViewItem( (string)t["email"] ));

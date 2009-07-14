@@ -59,11 +59,17 @@
   <ItemGroup>
     <Compile Include="BizTalk\Settings.cs" />
     <Compile Include="BizTalk\Talker.cs" />
-    <Compile Include="frmAccountWiz1.cs">
+    <Compile Include="frmWizGeneral.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmAccountWiz1.Designer.cs">
-      <DependentUpon>frmAccountWiz1.cs</DependentUpon>
+    <Compile Include="frmWizGeneral.Designer.cs">
+      <DependentUpon>frmWizGeneral.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmWizAccount.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmWizAccount.Designer.cs">
+      <DependentUpon>frmWizAccount.cs</DependentUpon>
     </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
@@ -71,10 +77,15 @@
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Proc\Bootstrap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="frmAccountWiz1.resx">
-      <DependentUpon>frmAccountWiz1.cs</DependentUpon>
+    <EmbeddedResource Include="frmWizGeneral.resx">
+      <DependentUpon>frmWizGeneral.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmWizAccount.resx">
+      <DependentUpon>frmWizAccount.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
@@ -101,11 +112,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Utils\ErrorHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icons-test-export.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="emex-options.xml.template" />
     <Content Include="frontend_appender.xml" />
     <Content Include="emex-options.xml" />
   </ItemGroup>
@@ -119,6 +132,6 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\bin
-copy $(ProjectDir)emex-options.xml $(ProjectDir)..\bin</PostBuildEvent>
+copy $(ProjectDir)emex-options.xml.template $(ProjectDir)..\bin</PostBuildEvent>
   </PropertyGroup>
 </Project>
