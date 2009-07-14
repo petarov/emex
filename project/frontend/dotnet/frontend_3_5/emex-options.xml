@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <emex-options>
+  <configured></configured>
   <backend>
     <server>127.0.0.1</server>
     <port>8080</port>
+    <path></path>
   </backend>
   <account>
-    <address>deyan.imap@localhost</address>
+    <address></address>
   </account>
 </emex-options>
