@@ -28,7 +28,7 @@ use Logger;
 use ResponseHandler;
 
 use constant DB_PATH =>
-  File::Spec->rel2abs( catfile( cwd(), '../../data/db' ) );
+  File::Spec->rel2abs( catfile( $ENV{'EMEX_PATH'}, '/data/db' ) );
 use constant DB_PROTOTYP_PATH =>
   File::Spec->rel2abs( catfile( DB_PATH, 'prototype-acc.s3db' ) );
 

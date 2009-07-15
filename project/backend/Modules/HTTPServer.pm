@@ -34,11 +34,6 @@ sub new {
 	return $self;
 }
 
-sub test_server {
-	my $self = shift;
-	$logger->trace("TEST HTTP");
-}
-
 sub start {
 	my ($self,$host,$port) = @_;
 	

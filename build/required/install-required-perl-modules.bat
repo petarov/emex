@@ -2,6 +2,7 @@
 
 echo Installing Perl Modules ...
 
+perl -MCPAN -e "install Config::Tiny"
 perl -MCPAN -e "install Mail::POP3Client"
 perl -MCPAN -e "install Mail::IMAPClient"
 perl -MCPAN -e "install MIME::Parser"

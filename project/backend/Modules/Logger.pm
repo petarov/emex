@@ -20,8 +20,9 @@ use Cwd;
 use Log::Log4perl;
 
 use constant LOGGER_CONF => File::Spec->catfile( 
-								File::Spec->rel2abs( 
-									File::Spec->catfile( cwd(), '../../data/conf' ) ), 'logger-default.conf');
+								File::Spec->rel2abs(
+									File::Spec->catfile( $ENV{'EMEX_PATH'}, 'data/conf' ) ), 'logger-default.conf'); 
+									#File::Spec->catfile( cwd(), '../data/conf' ) ), 'logger-default.conf');
 
 sub create {
 	my ($package) = @_;
