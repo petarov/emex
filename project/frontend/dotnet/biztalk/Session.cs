@@ -100,7 +100,7 @@ namespace biztalk
         {
             //Note: arguments length must be even number !
             Hashtable hargs = new Hashtable(args.Length);
-            for (int i = 0; i < args.Length / 2; i += 2)
+            for (int i = 0; i < args.Length; i += 2)
             {
                 hargs[args[i]] = args[i + 1];
             }

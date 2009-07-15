@@ -41,10 +41,21 @@
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader("(none)");
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.imgListContacts = new System.Windows.Forms.ImageList(this.components);
+            this.tabPageMails = new System.Windows.Forms.TabPage();
+            this.listViewMessages = new System.Windows.Forms.ListView();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
             this.tabPageAttachments = new System.Windows.Forms.TabPage();
             this.listViewAttachments = new System.Windows.Forms.ListView();
+            this.columnHeader18 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader19 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader20 = new System.Windows.Forms.ColumnHeader();
             this.tabPageTags = new System.Windows.Forms.TabPage();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.panelTags = new System.Windows.Forms.Panel();
+            this.txtSearch = new System.Windows.Forms.TextBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -55,26 +66,30 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.contextMenuContacts = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuNewMail = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuMails = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAttachments = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuProfile = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuMails = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabPageMails = new System.Windows.Forms.TabPage();
-            this.listViewMessages = new System.Windows.Forms.ListView();
-            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader12 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader13 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader14 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader15 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader16 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader17 = new System.Windows.Forms.ColumnHeader();
             this.menuStrip1.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageContacts.SuspendLayout();
+            this.tabPageMails.SuspendLayout();
             this.tabPageAttachments.SuspendLayout();
+            this.tabPageTags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.contextMenuContacts.SuspendLayout();
-            this.tabPageMails.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -131,6 +146,7 @@
             this.tabControlMain.SelectedIndex = 0;
             this.tabControlMain.Size = new System.Drawing.Size(391, 409);
             this.tabControlMain.TabIndex = 6;
+            this.tabControlMain.TabIndexChanged += new System.EventHandler(this.tabControlMain_TabIndexChanged);
             // 
             // tabPageContacts
             // 
@@ -182,6 +198,60 @@
             this.imgListContacts.Images.SetKeyName(5, "email_open_image.png");
             this.imgListContacts.Images.SetKeyName(6, "email_attach.png");
             // 
+            // tabPageMails
+            // 
+            this.tabPageMails.Controls.Add(this.listViewMessages);
+            this.tabPageMails.ImageIndex = 3;
+            this.tabPageMails.Location = new System.Drawing.Point(4, 25);
+            this.tabPageMails.Name = "tabPageMails";
+            this.tabPageMails.Size = new System.Drawing.Size(383, 380);
+            this.tabPageMails.TabIndex = 2;
+            this.tabPageMails.Text = "Messages";
+            this.tabPageMails.UseVisualStyleBackColor = true;
+            // 
+            // listViewMessages
+            // 
+            this.listViewMessages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6,
+            this.columnHeader7});
+            this.listViewMessages.GridLines = true;
+            this.listViewMessages.LargeImageList = this.imgListContacts;
+            this.listViewMessages.Location = new System.Drawing.Point(0, 0);
+            this.listViewMessages.Name = "listViewMessages";
+            this.listViewMessages.Size = new System.Drawing.Size(382, 377);
+            this.listViewMessages.SmallImageList = this.imgListContacts;
+            this.listViewMessages.TabIndex = 1;
+            this.listViewMessages.UseCompatibleStateImageBehavior = false;
+            this.listViewMessages.View = System.Windows.Forms.View.Details;
+            this.listViewMessages.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewMessages_MouseDoubleClick);
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Subject";
+            this.columnHeader3.Width = 152;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Sender";
+            this.columnHeader4.Width = 80;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Date";
+            this.columnHeader5.Width = 71;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Priority";
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Id";
+            this.columnHeader7.Width = 0;
+            // 
             // tabPageAttachments
             // 
             this.tabPageAttachments.Controls.Add(this.listViewAttachments);
@@ -196,14 +266,37 @@
             // 
             // listViewAttachments
             // 
-            this.listViewAttachments.Location = new System.Drawing.Point(-2, 0);
+            this.listViewAttachments.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader18,
+            this.columnHeader19,
+            this.columnHeader20});
+            this.listViewAttachments.GridLines = true;
+            this.listViewAttachments.Location = new System.Drawing.Point(0, 0);
             this.listViewAttachments.Name = "listViewAttachments";
             this.listViewAttachments.Size = new System.Drawing.Size(382, 377);
+            this.listViewAttachments.SmallImageList = this.imgListContacts;
             this.listViewAttachments.TabIndex = 0;
             this.listViewAttachments.UseCompatibleStateImageBehavior = false;
+            this.listViewAttachments.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader18
+            // 
+            this.columnHeader18.Text = "Name";
+            this.columnHeader18.Width = 129;
+            // 
+            // columnHeader19
+            // 
+            this.columnHeader19.Text = "Type";
+            this.columnHeader19.Width = 103;
+            // 
+            // columnHeader20
+            // 
+            this.columnHeader20.Text = "Sender";
+            this.columnHeader20.Width = 124;
             // 
             // tabPageTags
             // 
+            this.tabPageTags.Controls.Add(this.panelTags);
             this.tabPageTags.ImageIndex = 4;
             this.tabPageTags.Location = new System.Drawing.Point(4, 25);
             this.tabPageTags.Name = "tabPageTags";
@@ -211,16 +304,26 @@
             this.tabPageTags.TabIndex = 0;
             this.tabPageTags.Text = "Tags";
             this.tabPageTags.UseVisualStyleBackColor = true;
+            this.tabPageTags.Click += new System.EventHandler(this.tabPageTags_Click);
             // 
-            // textBox1
+            // panelTags
             // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(45)))), ((int)(((byte)(145)))));
-            this.textBox1.Location = new System.Drawing.Point(12, 127);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(328, 24);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.Text = "Search";
+            this.panelTags.Location = new System.Drawing.Point(0, 0);
+            this.panelTags.Name = "panelTags";
+            this.panelTags.Size = new System.Drawing.Size(383, 384);
+            this.panelTags.TabIndex = 0;
+            // 
+            // txtSearch
+            // 
+            this.txtSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(45)))), ((int)(((byte)(145)))));
+            this.txtSearch.Location = new System.Drawing.Point(12, 127);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(328, 26);
+            this.txtSearch.TabIndex = 2;
+            this.txtSearch.Text = "[Search]";
+            this.txtSearch.Click += new System.EventHandler(this.txtSearch_Click);
+            this.txtSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyUp);
             // 
             // pictureBox4
             // 
@@ -326,6 +429,14 @@
             this.toolStripMenuNewMail.Text = "New E-Mail";
             this.toolStripMenuNewMail.Click += new System.EventHandler(this.toolStripMenuNewMail_Click);
             // 
+            // toolStripMenuMails
+            // 
+            this.toolStripMenuMails.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuMails.Image")));
+            this.toolStripMenuMails.Name = "toolStripMenuMails";
+            this.toolStripMenuMails.Size = new System.Drawing.Size(135, 22);
+            this.toolStripMenuMails.Text = "Messages";
+            this.toolStripMenuMails.Click += new System.EventHandler(this.toolStripMenuMails_Click);
+            // 
             // toolStripMenuAttachments
             // 
             this.toolStripMenuAttachments.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuAttachments.Image")));
@@ -342,67 +453,53 @@
             this.toolStripMenuProfile.Text = "Profile";
             this.toolStripMenuProfile.Click += new System.EventHandler(this.toolStripMenuProfile_Click);
             // 
-            // toolStripMenuMails
+            // columnHeader8
             // 
-            this.toolStripMenuMails.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuMails.Image")));
-            this.toolStripMenuMails.Name = "toolStripMenuMails";
-            this.toolStripMenuMails.Size = new System.Drawing.Size(135, 22);
-            this.toolStripMenuMails.Text = "Messages";
-            this.toolStripMenuMails.Click += new System.EventHandler(this.toolStripMenuMails_Click);
+            this.columnHeader8.Text = "Subject";
+            this.columnHeader8.Width = 158;
             // 
-            // tabPageMails
+            // columnHeader9
             // 
-            this.tabPageMails.Controls.Add(this.listViewMessages);
-            this.tabPageMails.ImageIndex = 3;
-            this.tabPageMails.Location = new System.Drawing.Point(4, 25);
-            this.tabPageMails.Name = "tabPageMails";
-            this.tabPageMails.Size = new System.Drawing.Size(383, 380);
-            this.tabPageMails.TabIndex = 2;
-            this.tabPageMails.Text = "Messages";
-            this.tabPageMails.UseVisualStyleBackColor = true;
+            this.columnHeader9.Text = "Sender";
+            this.columnHeader9.Width = 80;
             // 
-            // listViewMessages
+            // columnHeader10
             // 
-            this.listViewMessages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6,
-            this.columnHeader7});
-            this.listViewMessages.GridLines = true;
-            this.listViewMessages.LargeImageList = this.imgListContacts;
-            this.listViewMessages.Location = new System.Drawing.Point(0, 2);
-            this.listViewMessages.Name = "listViewMessages";
-            this.listViewMessages.Size = new System.Drawing.Size(382, 377);
-            this.listViewMessages.SmallImageList = this.imgListContacts;
-            this.listViewMessages.TabIndex = 1;
-            this.listViewMessages.UseCompatibleStateImageBehavior = false;
-            this.listViewMessages.View = System.Windows.Forms.View.Details;
-            this.listViewMessages.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewMessages_MouseDoubleClick);
+            this.columnHeader10.Text = "Date";
+            this.columnHeader10.Width = 71;
             // 
-            // columnHeader3
+            // columnHeader11
             // 
-            this.columnHeader3.Text = "Subject";
-            this.columnHeader3.Width = 158;
+            this.columnHeader11.Text = "Priority";
             // 
-            // columnHeader4
+            // columnHeader12
             // 
-            this.columnHeader4.Text = "Sender";
-            this.columnHeader4.Width = 80;
+            this.columnHeader12.Text = "Id";
+            this.columnHeader12.Width = 0;
             // 
-            // columnHeader5
+            // columnHeader13
             // 
-            this.columnHeader5.Text = "Date";
-            this.columnHeader5.Width = 71;
+            this.columnHeader13.Text = "Subject";
+            this.columnHeader13.Width = 158;
             // 
-            // columnHeader6
+            // columnHeader14
             // 
-            this.columnHeader6.Text = "Priority";
+            this.columnHeader14.Text = "Sender";
+            this.columnHeader14.Width = 80;
             // 
-            // columnHeader7
+            // columnHeader15
             // 
-            this.columnHeader7.DisplayIndex = 4;
-            this.columnHeader7.Text = "Id";
+            this.columnHeader15.Text = "Date";
+            this.columnHeader15.Width = 71;
+            // 
+            // columnHeader16
+            // 
+            this.columnHeader16.Text = "Priority";
+            // 
+            // columnHeader17
+            // 
+            this.columnHeader17.Text = "Id";
+            this.columnHeader17.Width = 0;
             // 
             // frmMain
             // 
@@ -415,7 +512,7 @@
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnSearch);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnNewMail);
             this.Controls.Add(this.tabControlMain);
@@ -430,13 +527,14 @@
             this.menuStrip1.PerformLayout();
             this.tabControlMain.ResumeLayout(false);
             this.tabPageContacts.ResumeLayout(false);
+            this.tabPageMails.ResumeLayout(false);
             this.tabPageAttachments.ResumeLayout(false);
+            this.tabPageTags.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.contextMenuContacts.ResumeLayout(false);
-            this.tabPageMails.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -452,7 +550,7 @@
         private System.Windows.Forms.TabPage tabPageContacts;
         private System.Windows.Forms.TabPage tabPageAttachments;
         private System.Windows.Forms.TabPage tabPageTags;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Button btnNewMail;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnSearch;
@@ -479,6 +577,20 @@
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.ColumnHeader columnHeader18;
+        private System.Windows.Forms.ColumnHeader columnHeader19;
+        private System.Windows.Forms.ColumnHeader columnHeader20;
+        private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.ColumnHeader columnHeader10;
+        private System.Windows.Forms.ColumnHeader columnHeader11;
+        private System.Windows.Forms.ColumnHeader columnHeader12;
+        private System.Windows.Forms.ColumnHeader columnHeader13;
+        private System.Windows.Forms.ColumnHeader columnHeader14;
+        private System.Windows.Forms.ColumnHeader columnHeader15;
+        private System.Windows.Forms.ColumnHeader columnHeader16;
+        private System.Windows.Forms.ColumnHeader columnHeader17;
+        private System.Windows.Forms.Panel panelTags;
     }
 }
 

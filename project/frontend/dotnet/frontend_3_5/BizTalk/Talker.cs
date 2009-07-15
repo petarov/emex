@@ -43,7 +43,7 @@ namespace frontend_3_5.BizTalk
             return this.session.JSON2Result(json);
         }
 
-        public Result EditContact(Hashtable hashInfo )
+        public Result EditContact(Hashtable hashInfo)
         {
             string json = this.session.request(
                 Session.RequestType.RT_GET,
@@ -67,6 +67,81 @@ namespace frontend_3_5.BizTalk
                 Session.RequestType.RT_GET,
                 "list_mails",
                 "email", session.UserMail);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result ListMailsBySearchTag(string tagID)
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "list_mails_by_searchtag",
+                "email", session.UserMail,
+                "tagid", tagID );
+            return this.session.JSON2Result(json);
+        }
+
+        public Result GetMail(string mailID, string mailBoxPassword)
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "get_email",
+                "email", session.UserMail,
+                "id", mailID,
+                "pass", mailBoxPassword);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result SendMail(string To, string Cc, string Bcc, string Subject, string Body, string smtpPassword)
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_POST,
+                "send_email",
+                "email", session.UserMail,
+                "to", To,
+                "cc", Cc,
+                "bcc", Bcc,
+                "subject", Subject,
+                "body", Body,
+                "pass", smtpPassword);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result ListContactMails(string contactId)
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "list_contact_mails",
+                "email", session.UserMail,
+                "id", contactId );
+            return this.session.JSON2Result(json);
+        }
+
+        public Result ListAttacments()
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "list_attachments",
+                "email", session.UserMail);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result ListTags()
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "list_tags",
+                "email", session.UserMail);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result SearchEMail(string word)
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "search_email",
+                "email", session.UserMail,
+                "word", word
+                );
             return this.session.JSON2Result(json);
         }
 

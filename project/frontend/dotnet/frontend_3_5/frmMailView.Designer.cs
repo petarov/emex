@@ -36,11 +36,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtTo = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtCC = new System.Windows.Forms.TextBox();
+            this.txtBCC = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtCC = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtSubject = new System.Windows.Forms.TextBox();
             this.txtBody = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -114,12 +114,12 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "Bcc:";
             // 
-            // txtCC
+            // txtBCC
             // 
-            this.txtCC.Location = new System.Drawing.Point(68, 113);
-            this.txtCC.Name = "txtCC";
-            this.txtCC.Size = new System.Drawing.Size(546, 20);
-            this.txtCC.TabIndex = 2;
+            this.txtBCC.Location = new System.Drawing.Point(68, 113);
+            this.txtBCC.Name = "txtBCC";
+            this.txtBCC.Size = new System.Drawing.Size(546, 20);
+            this.txtBCC.TabIndex = 2;
             // 
             // label4
             // 
@@ -131,12 +131,12 @@
             this.label4.TabIndex = 1;
             this.label4.Text = "Cc:";
             // 
-            // textBox1
+            // txtCC
             // 
-            this.textBox1.Location = new System.Drawing.Point(68, 87);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(546, 20);
-            this.textBox1.TabIndex = 2;
+            this.txtCC.Location = new System.Drawing.Point(68, 87);
+            this.txtCC.Name = "txtCC";
+            this.txtCC.Size = new System.Drawing.Size(546, 20);
+            this.txtCC.TabIndex = 2;
             // 
             // label5
             // 
@@ -148,12 +148,12 @@
             this.label5.TabIndex = 1;
             this.label5.Text = "Subject:";
             // 
-            // textBox2
+            // txtSubject
             // 
-            this.textBox2.Location = new System.Drawing.Point(99, 139);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(515, 20);
-            this.textBox2.TabIndex = 2;
+            this.txtSubject.Location = new System.Drawing.Point(99, 139);
+            this.txtSubject.Name = "txtSubject";
+            this.txtSubject.Size = new System.Drawing.Size(515, 20);
+            this.txtSubject.TabIndex = 2;
             // 
             // txtBody
             // 
@@ -202,19 +202,20 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.txtBody);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.txtCC);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.txtBCC);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtTo);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.txtSubject);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtFrom);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.toolStrip1);
             this.MaximizeBox = false;
             this.Name = "frmMailView";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmNewMail";
             this.Load += new System.EventHandler(this.frmMailView_Load);
             this.toolStrip1.ResumeLayout(false);
@@ -233,11 +234,11 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtTo;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtCC;
+        private System.Windows.Forms.TextBox txtBCC;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtCC;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtSubject;
         private System.Windows.Forms.TextBox txtBody;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Button btnCancel;
