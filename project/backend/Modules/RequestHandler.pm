@@ -39,6 +39,8 @@ my %resources = (
 	R_BUILD_MBOX => '/build_mbox',
 	R_UPDATE_MBOX => '/update_mbox',
 	R_LIST_USERS => '/list_users',
+	R_EDIT_CONTACT => '/edit_contact',
+	R_LIST_MAILS => '/list_mails',
 	R_LIST_ATTACHMENTS => '/list_attachments',
 	R_GET_EMAIL => '/get_email',
 	R_SEND_EMAIL => '/send_email',
@@ -125,6 +127,28 @@ sub handle_method_get {
 			$valid_params = 0;
 		}		
 	}	
+	elsif ( /^$resources{R_EDIT_CONTACT}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email id) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->edit_contact( $uri->query_form_hash ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}	
+	elsif ( /^$resources{R_LIST_MAILS}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->list_mails(); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}		
 	elsif ( /^$resources{R_LIST_ATTACHMENTS}$/ ) {
 		# get list of contacts
 		if ( http_validate_params( $uri, qw(email) ) ) {
@@ -136,6 +160,17 @@ sub handle_method_get {
 			$valid_params = 0;
 		}		
 	}
+	elsif ( /^$resources{R_GET_EMAIL}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email id) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->get_email( $uri->query_param('id') ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}		
 	elsif ( /^$resources{R_SEARCH_EMAIL}$/ ) {
 		# get list of contacts
 		if ( http_validate_params( $uri, qw(email word) ) ) {

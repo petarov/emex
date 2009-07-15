@@ -296,8 +296,6 @@ sub build_mbox {
 				$prio = "$2";
 			}
 
-			#print "PRIO:\t" . $prio . "\n";
-
 			# get datetime
 			my $dt = DateTime::Format::DateParse->parse_datetime(
 				$hashref->{$uid}{'INTERNALDATE'} );
@@ -305,7 +303,7 @@ sub build_mbox {
 			#--- insert [Email]
 			my $sth = $db_handle->prepare(
 				qq/INSERT INTO 
-						EMail(id,conversation_id,messageID,uid,inReplyTo,dateRecieved,priority,type,subject) 
+						EMail(id,conversation_id,messageID,uid,inReplyTo,dateRecieved,priority,subject,folder) 
 						VALUES(NULL,?,?,?,?,?,?,?,?)/
 			);
 
@@ -315,8 +313,8 @@ sub build_mbox {
 			$sth->bind_param( 4, $imap->get_header( $i, "In-Reply-To" ), SQL_VARCHAR );
 			$sth->bind_param( 5, $dt, SQL_TIMESTAMP );
 			$sth->bind_param( 6, $prio ? $prio : 0, SQL_INTEGER );
-			$sth->bind_param( 7, 1.0, SQL_FLOAT );
-			$sth->bind_param( 8, $subject, SQL_VARCHAR );
+			$sth->bind_param( 7, $subject, SQL_VARCHAR );
+			$sth->bind_param( 8, $folder, SQL_VARCHAR );
 			$sth->execute;
 
 			$sth = $db_handle->prepare(qq/SELECT MAX(id) FROM EMail/);
@@ -471,8 +469,75 @@ sub list_users {
 	$sth->execute;
 	
 	my $hash_ref = $sth->fetchall_arrayref({});
-	#use Data::Dumper;
-	#print Dumper( $hash_ref );
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
+}
+
+sub edit_contact {
+	my ($self, $params) = @_;
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	$logger->info("Updating user " . $$params{'who'} . " ...");
+	  
+	my $sth = $db_handle->prepare(qq/UPDATE Conversant 
+			SET other_email=?,fullname=?,nickname=?,birthday=?,tel_work=?,tel_home=?,tel_fax=?,tel_pager=?,tel_mobile=?,AIM=?  
+			WHERE id=? /);
+	
+	$sth->bind_param( 1, $$params{'other_email'}, SQL_VARCHAR );
+	$sth->bind_param( 2, $$params{'fullname'}, SQL_VARCHAR );
+	$sth->bind_param( 3, $$params{'nickname'}, SQL_VARCHAR );
+	$sth->bind_param( 4, $$params{'birthday'}, SQL_TIMESTAMP );
+	$sth->bind_param( 5, $$params{'tel_work'}, SQL_VARCHAR );
+	$sth->bind_param( 6, $$params{'tel_home'}, SQL_VARCHAR );
+	$sth->bind_param( 7, $$params{'tel_fax'}, SQL_VARCHAR );
+	$sth->bind_param( 8, $$params{'tel_pager'}, SQL_VARCHAR );
+	$sth->bind_param( 9, $$params{'tel_mobile'}, SQL_VARCHAR );
+	$sth->bind_param( 10, $$params{'AIM'}, SQL_VARCHAR );
+	$sth->bind_param( 11, $$params{'id'}, SQL_VARCHAR );
+	$sth->execute;	
+	
+	$db_handle->commit;
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok();	  
+}
+
+sub list_mails {
+	my ($self) = @_;
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	my $sth = $db_handle->prepare(qq/SELECT id, dateRecieved, priority, subject 
+		FROM EMail 
+		LEFT OUTER JOIN Conversant ON Conversant.id = EMail/);
+		
+	$sth->execute;
+	
+	my $hash_ref = $sth->fetchall_arrayref({});
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
+}
+
+sub get_mail {
+	my ($self, $id) = @_;
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	# get mail info
+	my $sth = $db_handle->prepare(qq/SELECT uid, folder FROM EMail /);
+	$sth->execute;
+	my @row = $sth->fetchrow_array;
+	if ( @row ) {
+		#TODO: get mail
+	}	
+	
+	my $hash_ref = $sth->fetchall_arrayref({});
 	$db_handle->disconnect();	  
 	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
 }
@@ -484,12 +549,12 @@ sub list_attachments {
 	  or return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to open database!');
 	  
-	my $sth = $db_handle->prepare(qq/SELECT * FROM Attachment/);
+	my $sth = $db_handle->prepare(qq/SELECT Attachment.id, email_id, name, type, Conversant.email  
+		FROM Attachment 
+		LEFT OUTER JOIN Conversant ON Conversant.id = Attachment.conversant_id/);
 	$sth->execute;
 	
-	my $hash_ref = $sth->fetchall_hashref('id');
-	#use Data::Dumper;
-	#print Dumper( $hash_ref );
+	my $hash_ref = $sth->fetchall_arrayref({});
 	$db_handle->disconnect();	  
 	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
 }
