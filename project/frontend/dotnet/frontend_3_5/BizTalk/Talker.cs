@@ -43,10 +43,31 @@ namespace frontend_3_5.BizTalk
             return this.session.JSON2Result(json);
         }
 
-        public Result GetContacts()
+        public Result EditContact(Hashtable hashInfo )
         {
-            Command cmd = new Command(this.session);
-            return cmd.GetContacts();
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "edit_contact",
+                hashInfo);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result ListContacts()
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "list_users",
+                "email", session.UserMail);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result ListMails()
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "list_mails",
+                "email", session.UserMail);
+            return this.session.JSON2Result(json);
         }
 
     }

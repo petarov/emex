@@ -59,6 +59,18 @@
   <ItemGroup>
     <Compile Include="BizTalk\Settings.cs" />
     <Compile Include="BizTalk\Talker.cs" />
+    <Compile Include="frmContactInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmContactInfo.Designer.cs">
+      <DependentUpon>frmContactInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMailView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMailView.Designer.cs">
+      <DependentUpon>frmMailView.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmStatus.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,6 +99,14 @@
     <Compile Include="Proc\UIWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="frmContactInfo.resx">
+      <DependentUpon>frmContactInfo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMailView.resx">
+      <DependentUpon>frmMailView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmStatus.resx">
       <DependentUpon>frmStatus.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -131,6 +151,7 @@
   <ItemGroup>
     <None Include="emex-options.xml.template" />
     <Content Include="frontend_appender.xml" />
+    <Content Include="Resources\256px-User_admin.svg.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

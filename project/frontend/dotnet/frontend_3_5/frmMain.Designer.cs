@@ -28,33 +28,53 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.emExToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabControlMain = new System.Windows.Forms.TabControl();
+            this.tabPageContacts = new System.Windows.Forms.TabPage();
+            this.listView1 = new System.Windows.Forms.ListView();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader("(none)");
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.imgListContacts = new System.Windows.Forms.ImageList(this.components);
+            this.tabPageAttachments = new System.Windows.Forms.TabPage();
+            this.listViewAttachments = new System.Windows.Forms.ListView();
+            this.tabPageTags = new System.Windows.Forms.TabPage();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnNewMail = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.contextMenuContacts = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuNewMail = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuAttachments = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuProfile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuMails = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabPageMails = new System.Windows.Forms.TabPage();
+            this.listViewMessages = new System.Windows.Forms.ListView();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
             this.menuStrip1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabControlMain.SuspendLayout();
+            this.tabPageContacts.SuspendLayout();
+            this.tabPageAttachments.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.contextMenuContacts.SuspendLayout();
+            this.tabPageMails.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -78,6 +98,13 @@
             this.emExToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
             this.emExToolStripMenuItem.Text = "EmEx";
             // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Text = "&Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click_1);
+            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
@@ -90,48 +117,100 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.aboutToolStripMenuItem.Text = "About";
             // 
-            // tabControl1
+            // tabControlMain
             // 
-            this.tabControl1.BackColor = global::frontend_3_5.Properties.Settings.Default.TabColor;
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tabControl1.Location = new System.Drawing.Point(1, 231);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(391, 409);
-            this.tabControl1.TabIndex = 6;
+            this.tabControlMain.BackColor = global::frontend_3_5.Properties.Settings.Default.TabColor;
+            this.tabControlMain.Controls.Add(this.tabPageContacts);
+            this.tabControlMain.Controls.Add(this.tabPageMails);
+            this.tabControlMain.Controls.Add(this.tabPageAttachments);
+            this.tabControlMain.Controls.Add(this.tabPageTags);
+            this.tabControlMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.tabControlMain.ImageList = this.imgListContacts;
+            this.tabControlMain.Location = new System.Drawing.Point(1, 231);
+            this.tabControlMain.Name = "tabControlMain";
+            this.tabControlMain.SelectedIndex = 0;
+            this.tabControlMain.Size = new System.Drawing.Size(391, 409);
+            this.tabControlMain.TabIndex = 6;
             // 
-            // tabPage1
+            // tabPageContacts
             // 
-            this.tabPage1.Controls.Add(this.listView1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(383, 380);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Contacts";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPageContacts.Controls.Add(this.listView1);
+            this.tabPageContacts.ImageIndex = 2;
+            this.tabPageContacts.Location = new System.Drawing.Point(4, 25);
+            this.tabPageContacts.Name = "tabPageContacts";
+            this.tabPageContacts.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageContacts.Size = new System.Drawing.Size(383, 380);
+            this.tabPageContacts.TabIndex = 0;
+            this.tabPageContacts.Text = "Contacts";
+            this.tabPageContacts.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // listView1
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(383, 380);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Attachments";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listView1.Location = new System.Drawing.Point(0, 0);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(383, 380);
+            this.listView1.SmallImageList = this.imgListContacts;
+            this.listView1.TabIndex = 0;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
+            this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
-            // tabPage3
+            // columnHeader1
             // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(383, 380);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "Tags";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.columnHeader1.Text = "Contact";
+            this.columnHeader1.Width = 175;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Messages";
+            this.columnHeader2.Width = 123;
+            // 
+            // imgListContacts
+            // 
+            this.imgListContacts.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListContacts.ImageStream")));
+            this.imgListContacts.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgListContacts.Images.SetKeyName(0, "user.png");
+            this.imgListContacts.Images.SetKeyName(1, "wrench.png");
+            this.imgListContacts.Images.SetKeyName(2, "group.png");
+            this.imgListContacts.Images.SetKeyName(3, "email.png");
+            this.imgListContacts.Images.SetKeyName(4, "flag_purple.png");
+            this.imgListContacts.Images.SetKeyName(5, "email_open_image.png");
+            this.imgListContacts.Images.SetKeyName(6, "email_attach.png");
+            // 
+            // tabPageAttachments
+            // 
+            this.tabPageAttachments.Controls.Add(this.listViewAttachments);
+            this.tabPageAttachments.ImageIndex = 6;
+            this.tabPageAttachments.Location = new System.Drawing.Point(4, 25);
+            this.tabPageAttachments.Name = "tabPageAttachments";
+            this.tabPageAttachments.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageAttachments.Size = new System.Drawing.Size(383, 380);
+            this.tabPageAttachments.TabIndex = 1;
+            this.tabPageAttachments.Text = "Attachments";
+            this.tabPageAttachments.UseVisualStyleBackColor = true;
+            // 
+            // listViewAttachments
+            // 
+            this.listViewAttachments.Location = new System.Drawing.Point(-2, 0);
+            this.listViewAttachments.Name = "listViewAttachments";
+            this.listViewAttachments.Size = new System.Drawing.Size(382, 377);
+            this.listViewAttachments.TabIndex = 0;
+            this.listViewAttachments.UseCompatibleStateImageBehavior = false;
+            // 
+            // tabPageTags
+            // 
+            this.tabPageTags.ImageIndex = 4;
+            this.tabPageTags.Location = new System.Drawing.Point(4, 25);
+            this.tabPageTags.Name = "tabPageTags";
+            this.tabPageTags.Size = new System.Drawing.Size(383, 380);
+            this.tabPageTags.TabIndex = 0;
+            this.tabPageTags.Text = "Tags";
+            this.tabPageTags.UseVisualStyleBackColor = true;
             // 
             // textBox1
             // 
@@ -142,7 +221,6 @@
             this.textBox1.Size = new System.Drawing.Size(328, 24);
             this.textBox1.TabIndex = 2;
             this.textBox1.Text = "Search";
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // pictureBox4
             // 
@@ -172,40 +250,41 @@
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
             // 
-            // button3
+            // btnSearch
             // 
-            this.button3.BackgroundImage = global::frontend_3_5.Properties.Resources.go_btn;
-            this.button3.Location = new System.Drawing.Point(346, 126);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(35, 27);
-            this.button3.TabIndex = 5;
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSearch.BackgroundImage = global::frontend_3_5.Properties.Resources.go_btn;
+            this.btnSearch.Location = new System.Drawing.Point(346, 126);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(35, 27);
+            this.btnSearch.TabIndex = 5;
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
-            // button2
+            // btnRefresh
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(45)))), ((int)(((byte)(145)))));
-            this.button2.Image = global::frontend_3_5.Properties.Resources.refresh_btn;
-            this.button2.Location = new System.Drawing.Point(106, 174);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(88, 27);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Refresh";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnRefresh.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(45)))), ((int)(((byte)(145)))));
+            this.btnRefresh.Image = global::frontend_3_5.Properties.Resources.refresh_btn;
+            this.btnRefresh.Location = new System.Drawing.Point(106, 174);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(88, 27);
+            this.btnRefresh.TabIndex = 4;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // button1
+            // btnNewMail
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Image = global::frontend_3_5.Properties.Resources.new_mail_btn;
-            this.button1.Location = new System.Drawing.Point(12, 174);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(88, 27);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "New Mail";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnNewMail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnNewMail.ForeColor = System.Drawing.Color.White;
+            this.btnNewMail.Image = global::frontend_3_5.Properties.Resources.new_mail_btn;
+            this.btnNewMail.Location = new System.Drawing.Point(12, 174);
+            this.btnNewMail.Name = "btnNewMail";
+            this.btnNewMail.Size = new System.Drawing.Size(88, 27);
+            this.btnNewMail.TabIndex = 3;
+            this.btnNewMail.Text = "New Mail";
+            this.btnNewMail.UseVisualStyleBackColor = true;
+            this.btnNewMail.Click += new System.EventHandler(this.btnNewMail_Click);
             // 
             // pictureBox2
             // 
@@ -216,24 +295,114 @@
             this.pictureBox2.TabIndex = 8;
             this.pictureBox2.TabStop = false;
             // 
-            // listView1
+            // lblStatus
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.listView1.Location = new System.Drawing.Point(1, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(386, 380);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lblStatus.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.lblStatus.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblStatus.Location = new System.Drawing.Point(8, 655);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(373, 23);
+            this.lblStatus.TabIndex = 11;
+            this.lblStatus.Text = "Ready.";
             // 
-            // exitToolStripMenuItem
+            // contextMenuContacts
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.exitToolStripMenuItem.Text = "&Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click_1);
+            this.contextMenuContacts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuNewMail,
+            this.toolStripMenuMails,
+            this.toolStripMenuAttachments,
+            this.toolStripMenuProfile});
+            this.contextMenuContacts.Name = "contextMenuContacts";
+            this.contextMenuContacts.Size = new System.Drawing.Size(136, 92);
+            // 
+            // toolStripMenuNewMail
+            // 
+            this.toolStripMenuNewMail.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuNewMail.Image")));
+            this.toolStripMenuNewMail.Name = "toolStripMenuNewMail";
+            this.toolStripMenuNewMail.ShortcutKeyDisplayString = "";
+            this.toolStripMenuNewMail.Size = new System.Drawing.Size(135, 22);
+            this.toolStripMenuNewMail.Text = "New E-Mail";
+            this.toolStripMenuNewMail.Click += new System.EventHandler(this.toolStripMenuNewMail_Click);
+            // 
+            // toolStripMenuAttachments
+            // 
+            this.toolStripMenuAttachments.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuAttachments.Image")));
+            this.toolStripMenuAttachments.Name = "toolStripMenuAttachments";
+            this.toolStripMenuAttachments.Size = new System.Drawing.Size(135, 22);
+            this.toolStripMenuAttachments.Text = "Attachments";
+            this.toolStripMenuAttachments.Click += new System.EventHandler(this.toolStripMenuAttachments_Click);
+            // 
+            // toolStripMenuProfile
+            // 
+            this.toolStripMenuProfile.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuProfile.Image")));
+            this.toolStripMenuProfile.Name = "toolStripMenuProfile";
+            this.toolStripMenuProfile.Size = new System.Drawing.Size(135, 22);
+            this.toolStripMenuProfile.Text = "Profile";
+            this.toolStripMenuProfile.Click += new System.EventHandler(this.toolStripMenuProfile_Click);
+            // 
+            // toolStripMenuMails
+            // 
+            this.toolStripMenuMails.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuMails.Image")));
+            this.toolStripMenuMails.Name = "toolStripMenuMails";
+            this.toolStripMenuMails.Size = new System.Drawing.Size(135, 22);
+            this.toolStripMenuMails.Text = "Messages";
+            this.toolStripMenuMails.Click += new System.EventHandler(this.toolStripMenuMails_Click);
+            // 
+            // tabPageMails
+            // 
+            this.tabPageMails.Controls.Add(this.listViewMessages);
+            this.tabPageMails.ImageIndex = 3;
+            this.tabPageMails.Location = new System.Drawing.Point(4, 25);
+            this.tabPageMails.Name = "tabPageMails";
+            this.tabPageMails.Size = new System.Drawing.Size(383, 380);
+            this.tabPageMails.TabIndex = 2;
+            this.tabPageMails.Text = "Messages";
+            this.tabPageMails.UseVisualStyleBackColor = true;
+            // 
+            // listViewMessages
+            // 
+            this.listViewMessages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6,
+            this.columnHeader7});
+            this.listViewMessages.GridLines = true;
+            this.listViewMessages.LargeImageList = this.imgListContacts;
+            this.listViewMessages.Location = new System.Drawing.Point(0, 2);
+            this.listViewMessages.Name = "listViewMessages";
+            this.listViewMessages.Size = new System.Drawing.Size(382, 377);
+            this.listViewMessages.SmallImageList = this.imgListContacts;
+            this.listViewMessages.TabIndex = 1;
+            this.listViewMessages.UseCompatibleStateImageBehavior = false;
+            this.listViewMessages.View = System.Windows.Forms.View.Details;
+            this.listViewMessages.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewMessages_MouseDoubleClick);
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Subject";
+            this.columnHeader3.Width = 158;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Sender";
+            this.columnHeader4.Width = 80;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Date";
+            this.columnHeader5.Width = 71;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Priority";
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.DisplayIndex = 4;
+            this.columnHeader7.Text = "Id";
             // 
             // frmMain
             // 
@@ -241,28 +410,33 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveBorder;
             this.ClientSize = new System.Drawing.Size(393, 688);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnRefresh);
+            this.Controls.Add(this.btnNewMail);
+            this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.pictureBox2);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "EmEx";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.tabControlMain.ResumeLayout(false);
+            this.tabPageContacts.ResumeLayout(false);
+            this.tabPageAttachments.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.contextMenuContacts.ResumeLayout(false);
+            this.tabPageMails.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -274,14 +448,14 @@
         private System.Windows.Forms.ToolStripMenuItem emExToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabControl tabControlMain;
+        private System.Windows.Forms.TabPage tabPageContacts;
+        private System.Windows.Forms.TabPage tabPageAttachments;
+        private System.Windows.Forms.TabPage tabPageTags;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnNewMail;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox3;
@@ -290,6 +464,21 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ImageList imgListContacts;
+        private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.ListView listViewAttachments;
+        private System.Windows.Forms.ContextMenuStrip contextMenuContacts;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuNewMail;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuAttachments;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuProfile;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuMails;
+        private System.Windows.Forms.TabPage tabPageMails;
+        private System.Windows.Forms.ListView listViewMessages;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
     }
 }
 

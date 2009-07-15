@@ -77,7 +77,7 @@ namespace biztalk
             string q = string.Empty;
             foreach (string key in args.Keys)
             {
-                string val = (string)args[key];
+                string val = Convert.ToString( args[key] );
                 q += key + "=" + val + "&";
             }
             return q;

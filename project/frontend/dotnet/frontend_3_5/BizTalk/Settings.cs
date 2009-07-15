@@ -67,6 +67,14 @@ namespace frontend_3_5.BizTalk
             doc.Save(this.xmlSettingsPath);
         }
 
+        public string AccountAddress
+        {
+            get
+            {
+                return (string)hashSettings["account_address"]; 
+            }
+        }
+
         public bool IsConfigured
         {
             get
