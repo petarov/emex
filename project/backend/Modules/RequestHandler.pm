@@ -41,10 +41,13 @@ my %resources = (
 	R_LIST_USERS => '/list_users',
 	R_EDIT_CONTACT => '/edit_contact',
 	R_LIST_MAILS => '/list_mails',
+	R_LIST_MAILS_BY_SEARCHTAG => '/list_mails_by_searchtag',
+	R_LIST_CONTACT_MAILS => '/list_contact_mails',
 	R_LIST_ATTACHMENTS => '/list_attachments',
 	R_GET_EMAIL => '/get_email',
 	R_SEND_EMAIL => '/send_email',
 	R_SEARCH_EMAIL => '/search_email',
+	R_LIST_TAGS => '/list_tags',
 	R_CREATE_TAG => '/create_tag',
 	R_REMOVE_TAG => '/remove_tag',
 	R_PING => '/ping'
@@ -148,6 +151,28 @@ sub handle_method_get {
 		else {
 			$valid_params = 0;
 		}		
+	}	
+	elsif ( /^$resources{R_LIST_TAGS}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->list_tags(); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}		
+	elsif ( /^$resources{R_LIST_CONTACT_MAILS}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email id) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->list_contact_mails( $uri->query_param('id') ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
 	}		
 	elsif ( /^$resources{R_LIST_ATTACHMENTS}$/ ) {
 		# get list of contacts
@@ -160,11 +185,22 @@ sub handle_method_get {
 			$valid_params = 0;
 		}		
 	}
+	elsif ( /^$resources{R_LIST_MAILS_BY_SEARCHTAG}$/ ) {
+		# get list of contacts
+		if ( http_validate_params( $uri, qw(email tagid) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->list_mails_by_searchtag( $uri->query_param('tagid') ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}	
 	elsif ( /^$resources{R_GET_EMAIL}$/ ) {
 		# get list of contacts
-		if ( http_validate_params( $uri, qw(email id) ) ) {
+		if ( http_validate_params( $uri, qw(email id pass) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
-			my $json = $mbox->get_email( $uri->query_param('id') ); 
+			my $json = $mbox->get_email( $uri->query_param('id'), $uri->query_param('pass') ); 
 			$response = http_response_ok( $json );
 		}
 		else {
@@ -216,8 +252,11 @@ sub handle_method_post {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->send_mail( 
 				'TO' => $uri->query_param('to'),
+				'CC' => $uri->query_param('cc'),
+				'BCC' => $uri->query_param('bcc'),
 				'SUBJECT' => $uri->query_param('subject'),
-				'BODY' => $uri->query_param('body')
+				'BODY' => $uri->query_param('body'),
+				'PASS' => $uri->query_param('pass')
 				 ); 
 			$response = http_response_ok( $json );
 		}

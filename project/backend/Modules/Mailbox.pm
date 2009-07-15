@@ -254,7 +254,7 @@ sub build_mbox {
 		}
 
 		print "\n--------- $folder ----------\n";
-		for ( my $i = 1 ; $i < $msg_count ; $i++ ) {
+		for ( my $i = 1 ; $i < $msg_count + 1; $i++ ) {
 
 			print "\n---\n";
 			my $hashref =
@@ -275,6 +275,7 @@ sub build_mbox {
 			  if ( not $email );
 			  
 			my $subject = $imap->get_header( $i, "Subject" ) ? $imap->get_header( $i, "Subject" ) : '(No Subject)';
+			$logger->debug("Working on Email with subject => [$subject]");
 
 			print "UID:\t $uid \n";
 			print "FROM:\t" . $imap->get_header( $i, "From" ) . " | REAL => $email \n";
@@ -513,32 +514,192 @@ sub list_mails {
 	  
 	my $sth = $db_handle->prepare(qq/SELECT id, dateRecieved, priority, subject 
 		FROM EMail 
-		LEFT OUTER JOIN Conversant ON Conversant.id = EMail/);
+		/);
 		
 	$sth->execute;
 	
 	my $hash_ref = $sth->fetchall_arrayref({});
 	$db_handle->disconnect();	  
-	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );
 }
 
-sub get_mail {
-	my ($self, $id) = @_;
+sub list_mails_by_searchtag {
+	my ($self, $tagid ) = @_;
 
 	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
 	  or return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to open database!');
 	  
+	my $sth = $db_handle->prepare(qq/SELECT email_id FROM RelSearchTagToEMail WHERE tag_id=?/);
+	$sth->bind_param( 1, $tagid, SQL_INTEGER );
+	$sth->execute;	
+		  
+	my $hash_ref = [];
+	
+	while( my @row = $sth->fetchrow_array ) {
+		my $sth2 = $db_handle->prepare(qq/SELECT id, dateRecieved, priority, subject FROM EMail WHERE id=? /);
+		$sth2->bind_param( 1, $row[0], SQL_INTEGER );
+		$sth2->execute;
+		push( @$hash_ref, $sth2->fetchrow_hashref );
+	}
+	
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	
+}
+
+sub list_tags {
+	my ($self) = @_;
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	my $sth = $db_handle->prepare(qq/SELECT id, depth, data FROM SearchTags ORDER BY depth DESC/);
+	$sth->execute;
+	my $hash_ref = $sth->fetchall_arrayref({});
+	$db_handle->disconnect();	  
+	
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );
+}
+
+sub list_contact_mails {
+	my ($self, $userid) = @_;
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	my $sth = $db_handle->prepare(qq/SELECT email_id FROM RelConversantToEMail WHERE conversant_id = ?/);
+	$sth->bind_param( 1, $userid, SQL_INTEGER );
+	$sth->execute;	  
+	
+	my $hash_ref = [];
+	
+	while( my @row = $sth->fetchrow_array ) {
+		my $sth2 = $db_handle->prepare(qq/SELECT id, dateRecieved, priority, subject FROM EMail WHERE id=? /);
+		$sth2->bind_param( 1, $row[0], SQL_INTEGER );
+		$sth2->execute;
+		push( @$hash_ref, $sth2->fetchrow_hashref );
+	}
+	#use Data::Dumper;
+	#print Dumper( $hash_ref );
+		
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );
+}
+
+sub get_email {
+	my ($self, $id, $pass) = @_;
+	
+	if ( ! $pass ) {
+		$logger->error('Password for IMAP mailbox not specified !');
+		return Modules::ResponseHandler->new()->response_fail( 'Password for mailbox was not specified !' );
+	}
+
+	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
+	  or return Modules::ResponseHandler->new()
+	  ->response_fail('Failed to open database!');
+	  
+	my $hash_ref;
+	
 	# get mail info
-	my $sth = $db_handle->prepare(qq/SELECT uid, folder FROM EMail /);
+	my $sth = $db_handle->prepare(qq/SELECT uid, folder FROM EMail WHERE id=? /);
+	$sth->bind_param( 1, $id, SQL_INTEGER );
 	$sth->execute;
 	my @row = $sth->fetchrow_array;
 	if ( @row ) {
-		#TODO: get mail
-	}	
+		my $uid 	= $row[0];
+		my $folder 	= $row[1];
+		#TODO: check SERVER TYPE ?
 	
-	my $hash_ref = $sth->fetchall_arrayref({});
-	$db_handle->disconnect();	  
+		my ($host,$port,$user,$ssl,$server_type) = $self->get_settings( $db_handle );
+		
+		# open user mailbox
+		my $imap = Mail::IMAPClient->new(
+			Server   => $host,
+			User     => $user,
+			Password => $pass,
+			Uid      => 0,       #Problems !?
+			Clear    => 5,
+			#Debug   	=> 1,
+		  )
+		  or return Modules::ResponseHandler->new()
+		  ->response_fail('Failed to connect to IMAP server!');
+	
+		$imap->select($folder)
+			  or return Modules::ResponseHandler->new()
+			  ->response_fail('Failed to open mailbox !');
+	
+			my $hashref = $imap->fetch_hash( "UID", "INTERNALDATE", "RFC822.SIZE" );
+	
+			# get IMAP header
+			if ( !$uid ) {
+				$logger->warn("Invalid UID for E-mail in Folder => $folder !");
+				next;
+			}
+	
+			# get Email sender
+			$imap->get_header( $uid, "From" ) =~ /(.*)<(.*)>/;
+			my $email = "$2";
+			$email = $imap->get_header( $uid, "From" )
+			  if ( not $email );
+				  
+			my $subject = $imap->get_header( $uid, "Subject" ) ? 
+				$imap->get_header( $uid, "Subject" ) : '(No Subject)';
+	
+			my $to = $imap->get_header( $uid, "To" );
+			my $cc = $imap->get_header( $uid, "Cc" );
+			my $bcc = $imap->get_header( $uid, "Bcc" );
+	
+			#--- insert [Attachment]
+			my $mp = new MIME::Parser;
+			$mp->ignore_errors(1);
+			$mp->extract_uuencode(1);
+			$mp->decode_headers(1);
+			$mp->output_under("../../data/tmp");
+	
+			my $entity    = $mp->parse_data( $imap->bodypart_string($uid) );
+			my $num_parts = $entity->parts;
+			my @parts     = $entity->parts;
+	
+			my $j = 0;
+			my $bodydata;
+				
+				if ($num_parts > 0) {
+					for my $part ( $entity->parts ) {
+		
+						# first part is (always??) a body
+						if ( $j++ == 0 ) {
+							$bodydata = $part->bodyhandle->as_string;
+							next;
+						}
+		
+						# clean up extracted attachment
+						$mp->filer->purge;
+					}
+				}
+				else {
+					# NO ATTACHMENTS ! Just get the body
+		            if (my $io = $entity->open("r")) {
+		                while (defined($_ = $io->getline)) {
+		                    $bodydata .= $_;
+		                }
+	                	$io->close;
+		            }				
+				}
+	
+		$imap->close;
+	
+		# close IMAP
+		$imap->logout
+		  or $logger->warn('disconnect() failed for IMAP client !');	
+		  
+		$hash_ref = [ 
+			{'FROM' => $email, 'TO' => $to, 'CC' => $cc, 'BCC' => $bcc, 'SUBJECT' => $subject, 'BODY' => $bodydata} 
+		]	
+	}
+	$db_handle->commit;
+	$db_handle->disconnect();
 	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
 }
 
@@ -566,41 +727,45 @@ sub search {
 	  or return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to open database!');
 	  
-	my $sth = $db_handle->prepare(qq/SELECT id,data 
+	my $sth = $db_handle->prepare(qq/SELECT id,data,depth 
 			FROM SearchTags 
 			WHERE data LIKE '%$word%' 
-			ORDER BY depth/);
+			ORDER BY depth DESC/);
 	$sth->execute;
-	
-	my $hash_ref = $sth->fetchall_arrayref({}); #$sth->fetchall_hashref('id');
+	my $hash_ref = $sth->fetchall_arrayref({});
 	$db_handle->disconnect();	  
+	
 	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
 }
 
 sub send_mail {
 	my ($self, %params ) = @_;
-	#use Data::Dumper;
-	#print Dumper( %params );
+	
+	use Data::Dumper;
+	print Dumper( %params );	
 	
 	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
 	  or return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to open database!');	
-	
 	my ($host,$port,$user,$ssl,$server_type) = $self->get_settings( $db_handle ); 
-	
 	$db_handle->disconnect();	 
 	
+	$logger->info("Sending E-Mail to $params{'TO'} ...");
+	
 	my $smtp = Net::SMTP->new( $host,
-							   Timeout => 60 );
+							   Timeout => 60,
+							   Debug => 1 );
 								
     $smtp->mail( $self->{'email'} );
     $smtp->to( $params{'TO'} );
+    $smtp->cc( $params{'CC'} );
+    $smtp->bcc( $params{'BCC'} );
     $smtp->data();
     $smtp->datasend("From: $self->{'email'} \n");
     $smtp->datasend("To: $params{'TO'}\n");
+    $smtp->datasend("Cc: $params{'CC'}\n")
+    	if ( $params{'CC'} );
     $smtp->datasend("Subject: $params{'SUBJECT'}\n");
-    $smtp->datasend("\n");
-    $smtp->datasend("A simple test message\n");
     $smtp->datasend("\n");
     $smtp->datasend("$params{'BODY'}\n");
     $smtp->dataend();
