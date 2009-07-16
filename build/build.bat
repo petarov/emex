@@ -36,6 +36,9 @@ XCOPY %PROJECT_PATH%\frontend\dotnet\bin\log4net.dll dist\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\log4net.xml dist\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\Newtonsoft.Json.dll dist\ /C /F /R /Y
 
+echo Copying Additional files ...
+XCOPY %PROJECT_PATH%\scripts\emex.bat dist\ /C /F /R /Y
+
 :end
 pause
 @echo on
