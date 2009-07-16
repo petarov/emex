@@ -6,6 +6,8 @@ REM *************************************
 
 SET PROJECT_PATH=c:\prj\emex
 
+mkdir dist 
+
 echo Deleting old files ...
 DEL /Q /F /S dist\*.*
 rmdir /S /Q dist\backend
