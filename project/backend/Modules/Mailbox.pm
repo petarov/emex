@@ -27,10 +27,9 @@ use Time::gmtime;
 use Logger;
 use ResponseHandler;
 
-use constant DB_PATH =>
-  File::Spec->rel2abs( catfile( $ENV{'EMEX_PATH'}, '/data/db' ) );
-use constant DB_PROTOTYP_PATH =>
-  File::Spec->rel2abs( catfile( DB_PATH, 'prototype-acc.s3db' ) );
+use constant DB_PATH => File::Spec->rel2abs( catfile( $ENV{'EMEX_PATH'}, '/data/db' ) );
+use constant DB_PROTOTYP_PATH => File::Spec->rel2abs( catfile( DB_PATH, 'prototype-acc.s3db' ) );
+use constant TEMP_PATH => File::Spec->rel2abs( catfile( $ENV{'EMEX_PATH'}, '/data/tmp' ) );
 
 ### globals
 my $logger = Modules::Logger::create(__PACKAGE__);
@@ -349,7 +348,7 @@ sub build_mbox {
 			$mp->ignore_errors(1);
 			$mp->extract_uuencode(1);
 			$mp->decode_headers(1);
-			$mp->output_under("../../data/tmp");
+			$mp->output_under(TEMP_PATH);
 
 			my $entity    = $mp->parse_data( $imap->bodypart_string($uid) );
 			my $num_parts = $entity->parts;
@@ -656,7 +655,7 @@ sub get_email {
 			$mp->ignore_errors(1);
 			$mp->extract_uuencode(1);
 			$mp->decode_headers(1);
-			$mp->output_under("../../data/tmp");
+			$mp->output_under(TEMP_PATH);
 	
 			my $entity    = $mp->parse_data( $imap->bodypart_string($uid) );
 			my $num_parts = $entity->parts;
