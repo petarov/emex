@@ -1,0 +1,12 @@
+Installing IO::Socket::SSL using Strawberry Perl
+
+When you try to install Net::SSLeay as dependency of IO::Socket::SSL using Strawberry Perl and you get something like this:
+
+    Running install for module 'Net::SSLeay' Running make for F/FL/FLORA/Net-SSLeay-1.35.tar.gz Has already been unwrapped into directory C:\strawberry\cpan\build\Net-SSLeay-1.35-zncySb 'C:\strawberry\perl\bin\perl.exe Makefile.PL' returned status 512, won't make Running make test Make had some problems, won't test Running make install Make had some problems, won't install 
+
+or this:
+
+    dmake.EXE Error code 129, while making SSLeay.o
+    or error code 512.
+
+You should download OpenSSL library from Shining Light Productions - Win32 OpenSSL and NOT from gnuwin32 sourceforge page. After that, you just need to copy the files from C:\OpenSSL\lib\MinGW to C:\OpenSSL\lib. Installation will succeed. At least it did for me ;)
