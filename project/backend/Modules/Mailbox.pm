@@ -15,6 +15,7 @@ use strict;
 use warnings;
 
 use Mail::IMAPClient;
+use IO::Socket::SSL;
 use MIME::Parser;
 use Net::SMTP;
 use DateTime::Format::DateParse;
@@ -103,6 +104,43 @@ sub _open_database {
 	return $db_handle;
 }
 
+
+sub _open_imapbox {
+	my ( $self, $settings, $password ) = @_;
+	
+	$logger->info("IMAP Opening connection to $settings->{'incoming_server'}:$settings->{'incoming_port'} [Security=$settings->{'incoming_security'}] ...");
+	
+	my $imap;
+	if ( $settings->{'incoming_security'} eq "SSL" ) {
+		$logger->debug("Connecting trough SSL socket ...");
+		
+		$imap = Mail::IMAPClient->new(
+			Socket	 => IO::Socket::SSL->new(
+		   		PeerAddr => $settings->{'incoming_server'},
+		   		PeerPort => $settings->{'incoming_port'},
+		  	),
+			User     => $settings->{'username'},
+			Password => $password,
+			Uid      => 0,       #Problems !?
+			Debug => 1,
+		  );
+		    
+		$imap->State(Mail::IMAPClient::Connected())
+			if $imap;
+	}
+	else {
+		$imap = Mail::IMAPClient->new(
+			Server	 => $settings->{'incoming_server'},
+			Port	 => $settings->{'incoming_port'},
+			User     => $settings->{'username'},
+			Password => $password,
+			Uid      => 0,       #Problems !?
+		  );  		
+	}
+	
+	return $imap;
+}
+
 sub clear {
 	my ( $self ) = @_;
 	
@@ -139,7 +177,7 @@ sub clear {
 }
 
 sub register {
-	my ( $self, $username, $full_name, $incoming_server, $incoming_port, $server_type, $smtp_server, $smtp_port, $smtp_username, $smtp_security ) = @_;
+	my ( $self, $username, $full_name, $incoming_server, $incoming_port, $incoming_security, $server_type, $smtp_server, $smtp_port, $smtp_username, $smtp_security ) = @_;
 	
 	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
 	  || return Modules::ResponseHandler->new()
@@ -151,10 +189,10 @@ sub register {
 	#print "TIME:" . DateTime::Format::DateParse->parse_datetime( DateTime->now() );;
 	$sth = $db_handle->prepare( "INSERT INTO settings (key,value,last_update) VALUES (?,?,CURRENT_TIMESTAMP)" );
 	$sth->bind_param_array( 1,
-		[ qw(email username full_name incoming_server incoming_port server_type smtp_server smtp_port smtp_username smtp_security) ],
+		[ qw(email username full_name incoming_server incoming_port incoming_security server_type smtp_server smtp_port smtp_username smtp_security) ],
 		SQL_VARCHAR );
 	$sth->bind_param_array( 2,
-		[ $self->{'email'}, $username, $full_name, $incoming_server, $incoming_port, $server_type, $smtp_server, $smtp_port, $smtp_username, $smtp_security ],
+		[ $self->{'email'}, $username, $full_name, $incoming_server, $incoming_port, $incoming_security, $server_type, $smtp_server, $smtp_port, $smtp_username, $smtp_security ],
 		SQL_VARCHAR );
 	#$sth->bind_param_array(3, DateTime::Format::DateParse->parse_datetime( DateTime->now() ), SQL_TIMESTAMP ); # scalar will be reused for each row
 	$sth->execute_array( { ArrayTupleStatus => \my @tuple_status } );
@@ -168,26 +206,21 @@ sub register {
 sub get_settings {
 	my ($self, $db_handle) = @_;
 	
-	my ($host,$port,$user,$ssl,$server_type);
-	
+	my $hash_result;	
 	my $sth = $db_handle->prepare( qq/SELECT key,value FROM Settings/ );
 	$sth->execute;
-	my @row;
-	print "ROWS: " . @row;
-	while( @row = $sth->fetchrow_array ) {
-		$host = $row[1] if ( $row[0] eq 'incoming_server' );
-		$port = $row[1] if ( $row[0] eq 'incoming_port' );
-		$user = $row[1] if ( $row[0] eq 'username' );
-		$ssl = $row[1] if ( $row[0] eq 'smtp_security' );
-		$server_type = $row[1] if ( $row[0] eq 'server_type' );
-	}
 	
-	return ($host,$port,$user,$ssl,$server_type);
+	while( my @row = $sth->fetchrow_array ) {
+		$hash_result->{"$row[0]"} = $row[1];
+	}
+	#use Data::Dumper;
+	#print Dumper( $hash_result );
+	return $hash_result;
 }
 
 
 sub build_mbox {
-	my ($self) = @_;
+	my ($self, $pass) = @_;
 	
 	# just clean up everything from the current DB
 	$self->clear();
@@ -196,29 +229,20 @@ sub build_mbox {
 	  or return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to open database!');
 
-	#TODO: check SERVER TYPE ?
-
-	my ($host,$port,$user,$ssl,$server_type) = $self->get_settings( $db_handle );
-	my $pass = "123";
-	#if ( ! @row ) {
-	#	return Modules::ResponseHandler->new()->response_fail('User settings are missing !');		
-	#}
+	#load settings
+	my $settings = $self->get_settings( $db_handle );
+	if ( ! $settings ) {
+		return Modules::ResponseHandler->new()->response_fail('User settings are missing !');		
+	}
 	
 	# open user mailbox
-	
-	my $imap = Mail::IMAPClient->new(
-		Server   => $host,
-		User     => $user,
-		Password => $pass,
-		Uid      => 0,       #Problems !?
-		Clear    => 5,
-		#Debug   	=> 1,
-	  )
-	  or return Modules::ResponseHandler->new()
+	my $imap = $self->_open_imapbox( $settings, $pass );
+	$imap or return Modules::ResponseHandler->new()
 	  ->response_fail('Failed to connect to IMAP server!');
 
-	#my $Authenticated = $imap->Authenticated();
-	#my $Connected = $imap->Connected();
+	$imap->login() or $logger->warn("IMAP login has failed !"); 
+	#return Modules::ResponseHandler->new()
+	# ->response_fail("Failed to login to IMAP server!");
 
 	my @folders = $imap->folders
 	  or return Modules::ResponseHandler->new()
@@ -273,7 +297,10 @@ sub build_mbox {
 			$email = $imap->get_header( $i, "From" )
 			  if ( not $email );
 			  
-			my $subject = $imap->get_header( $i, "Subject" ) ? $imap->get_header( $i, "Subject" ) : '(No Subject)';
+			my $subject = $imap->subject( $uid );
+			$subject = '(No Subject)'
+				if ( ! $subject );
+				
 			$logger->debug("Working on Email with subject => [$subject]");
 
 			print "UID:\t $uid \n";
@@ -460,6 +487,8 @@ sub build_mbox {
 
 sub list_users {
 	my ($self) = @_;
+	
+	#$self->build_mbox("123");
 
 	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
 	  or return Modules::ResponseHandler->new()
@@ -609,24 +638,24 @@ sub get_email {
 	if ( @row ) {
 		my $uid 	= $row[0];
 		my $folder 	= $row[1];
-		#TODO: check SERVER TYPE ?
 	
-		my ($host,$port,$user,$ssl,$server_type) = $self->get_settings( $db_handle );
+			# load settings
+			my $settings = $self->get_settings( $db_handle );
+			if ( ! $settings ) {
+				return Modules::ResponseHandler->new()->response_fail('User settings are missing !');		
+			}
+			
+			# open user mailbox
+			my $imap = $self->_open_imapbox( $settings, $pass );
+			
+			$imap or return Modules::ResponseHandler->new()
+			  ->response_fail('Failed to connect to IMAP server!');
 		
-		# open user mailbox
-		my $imap = Mail::IMAPClient->new(
-			Server   => $host,
-			User     => $user,
-			Password => $pass,
-			Uid      => 0,       #Problems !?
-			Clear    => 5,
-			#Debug   	=> 1,
-		  )
-		  or return Modules::ResponseHandler->new()
-		  ->response_fail('Failed to connect to IMAP server!');
+			$imap->login() or $logger->warn("Failed to login to IMAP server!"); 
+			#return Modules::ResponseHandler->new()
+			 # ->response_fail("Failed to login to IMAP server!");
 	
-		$imap->select($folder)
-			  or return Modules::ResponseHandler->new()
+			$imap->select($folder) or return Modules::ResponseHandler->new()
 			  ->response_fail('Failed to open mailbox !');
 	
 			my $hashref = $imap->fetch_hash( "UID", "INTERNALDATE", "RFC822.SIZE" );
@@ -745,13 +774,19 @@ sub send_mail {
 	
 	my $db_handle = $self->_open_database( $self->_get_user_dbfile() )
 	  or return Modules::ResponseHandler->new()
-	  ->response_fail('Failed to open database!');	
-	my ($host,$port,$user,$ssl,$server_type) = $self->get_settings( $db_handle ); 
+	  ->response_fail('Failed to open database!');
+	  	
+	# load settings
+	my $settings = $self->get_settings( $db_handle );
+	if ( ! $settings ) {
+		return Modules::ResponseHandler->new()->response_fail('User settings are missing !');		
+	}
+			
 	$db_handle->disconnect();	 
 	
 	$logger->info("Sending E-Mail to $params{'TO'} ...");
 	
-	my $smtp = Net::SMTP->new( $host,
+	my $smtp = Net::SMTP->new( $settings->{'smtp_server'},
 							   Timeout => 60,
 							   Debug => 1 );
 								

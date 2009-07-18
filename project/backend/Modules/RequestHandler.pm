@@ -87,12 +87,13 @@ sub handle_method_get {
 	### APP
 	elsif ( /^$resources{R_REGISTER_USER}$/ ) {
 		# register new user database
-		if ( http_validate_params( $uri, qw(email username full_name incoming_server incoming_port server_type smtp_server smtp_port smtp_security) ) ) {
+		if ( http_validate_params( $uri, qw(email username full_name incoming_server incoming_port incoming_security server_type smtp_server smtp_port smtp_security) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->register( $uri->query_param('username'), 
 										$uri->query_param('full_name'),
 										$uri->query_param('incoming_server'),
 										$uri->query_param('incoming_port'),
+										$uri->query_param('incoming_security'),
 										$uri->query_param('server_type'),
 										$uri->query_param('smtp_server'),
 										$uri->query_param('smtp_port'),
@@ -110,9 +111,9 @@ sub handle_method_get {
 	}
 	elsif ( /^$resources{R_BUILD_MBOX}$/ ) {
 		# build database from user mailbox
-		if ( http_validate_params( $uri, qw(email) ) ) {
+		if ( http_validate_params( $uri, qw(email pass) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
-			my $json = $mbox->build_mbox( $uri->query_param('server') ); 
+			my $json = $mbox->build_mbox( $uri->query_param('pass') ); 
 			$response = http_response_ok( $json );
 		}
 		else {
