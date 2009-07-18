@@ -42,6 +42,7 @@ namespace frontend_3_5
 
         private void frmAccountWiz1_Load(object sender, EventArgs e)
         {
+            this.Text = "New Account Configuration";
             SetupPanels();
             setState(SetupStates.SS_AccountType);
             //setState(SetupStates.SS_UserNames);
@@ -97,10 +98,25 @@ namespace frontend_3_5
 
             radioEmail.Checked = true;
             radioIMAP.Checked = true;
+            radioPOP.Enabled = false;
             radioSecNo.Checked = true;
             txtSMTPPort.Text = "25";
 
             resetPanels();
+        }
+
+        private void doGmailSetup()
+        {
+            this.hashAccountInfo["full_name"] = txtYourName.Text.Trim();
+            this.hashAccountInfo["email"] = txtEmailAddress.Text.Trim();
+            this.hashAccountInfo["incoming_server"] = "imap.gmail.com";
+            this.hashAccountInfo["incoming_port"] = "993";
+            this.hashAccountInfo["username"] = txtUserName.Text.Trim();
+            this.hashAccountInfo["server_type"] = "imap";
+            this.hashAccountInfo["smtp_server"] = "smtp.gmail.com";
+            this.hashAccountInfo["smtp_port"] = "587";
+            this.hashAccountInfo["smtp_username"] = txtEmailAddress.Text.Trim();
+            this.hashAccountInfo["smtp_security"] = "SSL";
         }
 
         private void setState(SetupStates state)
@@ -145,21 +161,30 @@ namespace frontend_3_5
                     resetPanels();
                     panelReview.Show();
 
-                    this.hashAccountInfo["full_name"] = txtYourName.Text.Trim();
-                    this.hashAccountInfo["email"] = txtEmailAddress.Text.Trim();
-                    this.hashAccountInfo["incoming_server"] = txtIncomingServer.Text.Trim();
-                    this.hashAccountInfo["incoming_port"] = txtIncomingServerPort.Text.Trim();
-                    this.hashAccountInfo["username"] = txtUserName.Text.Trim();
-                    this.hashAccountInfo["server_type"] =
-                        radioIMAP.Checked ? "imap" : (radioPOP.Checked ? "pop" : "undefined");
-                    this.hashAccountInfo["smtp_server"] = txtSMTP.Text.Trim();
-                    this.hashAccountInfo["smtp_port"] = txtSMTPPort.Text.Trim();
-                    this.hashAccountInfo["smtp_username"] = txtSMTPUsername.Text.Trim();
-                    this.hashAccountInfo["smtp_security"] =
-                        radioSecNo.Checked ? "No" :
-                        radioSecTLSIf.Checked ? "TLSIF" :
-                        radioTLS.Checked ? "TLS" :
-                        radioSSL.Checked ? "SSL" : "No";
+                    if ( radioGMail.Checked )
+                    {
+                        // preconfigure hashtable with GMAIL settings
+                        doGmailSetup();
+                    }
+                    else
+                    {
+                        this.hashAccountInfo["full_name"] = txtYourName.Text.Trim();
+                        this.hashAccountInfo["email"] = txtEmailAddress.Text.Trim();
+                        this.hashAccountInfo["incoming_server"] = txtIncomingServer.Text.Trim();
+                        this.hashAccountInfo["incoming_port"] = txtIncomingServerPort.Text.Trim();
+                        this.hashAccountInfo["incoming_security"] = "No"; //TODO: HARDCODED?
+                        this.hashAccountInfo["username"] = txtUserName.Text.Trim();
+                        this.hashAccountInfo["server_type"] =
+                            radioIMAP.Checked ? "imap" : (radioPOP.Checked ? "pop" : "undefined");
+                        this.hashAccountInfo["smtp_server"] = txtSMTP.Text.Trim();
+                        this.hashAccountInfo["smtp_port"] = txtSMTPPort.Text.Trim();
+                        this.hashAccountInfo["smtp_username"] = txtSMTPUsername.Text.Trim();
+                        this.hashAccountInfo["smtp_security"] =
+                            radioSecNo.Checked ? "No" :
+                            radioSecTLSIf.Checked ? "TLSIF" :
+                            radioTLS.Checked ? "TLS" :
+                            radioSSL.Checked ? "SSL" : "No";
+                    }
 
                     // show info
                     lblReviewAll.Text = "Full Name: " + this.hashAccountInfo["full_name"];
@@ -188,6 +213,8 @@ namespace frontend_3_5
         {
             if ( (int)currentState - 1 >= 0 )
                 currentState = (SetupStates)((int)currentState - 1);
+            if (radioGMail.Checked && (int)currentState > 1)
+                currentState = SetupStates.SS_Identity;
             setState(currentState);
         }
 
@@ -212,7 +239,16 @@ namespace frontend_3_5
                         txtEmailAddress.Focus();
                         return;
                     }
-                    setState(SetupStates.SS_ServerInfo);
+
+                    // jump to Review if GMAIL selected
+                    if (radioGMail.Checked)
+                    {
+                        setState(SetupStates.SS_Review);
+                    }
+                    else
+                    {
+                        setState(SetupStates.SS_ServerInfo);
+                    }
                     break;
 
                 case SetupStates.SS_ServerInfo:
@@ -248,8 +284,14 @@ namespace frontend_3_5
                 case SetupStates.SS_Review:
                     try
                     {
+                        frmPassword frmPass = new frmPassword();
+                        if (DialogResult.OK != frmPass.ShowDialog())
+                            throw new Exception("The operation cannot continue without specifiing a password!");
+
                         // save to frontend
-                        Bootstrap.Instance().Settings.SaveAccountInfo((string)this.hashAccountInfo["email"]);
+                        Bootstrap.Instance().Settings.SaveAccountInfo(
+                            (string)this.hashAccountInfo["email"],
+                            frmPass.AccountPassword );
                         // save to backend
                         //TODO: not here right now!
 

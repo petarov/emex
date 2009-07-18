@@ -34,8 +34,10 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.panelGeneral = new System.Windows.Forms.Panel();
             this.label7 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.lblGeneral = new System.Windows.Forms.Label();
+            this.txtBackendPath = new System.Windows.Forms.TextBox();
             this.txtBackendPort = new System.Windows.Forms.TextBox();
             this.txtBackendServer = new System.Windows.Forms.TextBox();
             this.panelReview = new System.Windows.Forms.Panel();
@@ -43,8 +45,6 @@
             this.lblReview2 = new System.Windows.Forms.Label();
             this.lblReview = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.txtBackendPath = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.panelGeneral.SuspendLayout();
             this.panelReview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -113,9 +113,18 @@
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label7.Location = new System.Drawing.Point(22, 101);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(47, 19);
+            this.label7.Size = new System.Drawing.Size(96, 19);
             this.label7.TabIndex = 3;
-            this.label7.Text = "Port:";
+            this.label7.Text = "Backend Port:";
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Location = new System.Drawing.Point(22, 126);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(96, 19);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "EmEx Path:";
             // 
             // label4
             // 
@@ -130,9 +139,16 @@
             // 
             this.lblGeneral.Location = new System.Drawing.Point(22, 13);
             this.lblGeneral.Name = "lblGeneral";
-            this.lblGeneral.Size = new System.Drawing.Size(328, 42);
+            this.lblGeneral.Size = new System.Drawing.Size(328, 60);
             this.lblGeneral.TabIndex = 1;
             this.lblGeneral.Text = "label2";
+            // 
+            // txtBackendPath
+            // 
+            this.txtBackendPath.Location = new System.Drawing.Point(124, 126);
+            this.txtBackendPath.Name = "txtBackendPath";
+            this.txtBackendPath.Size = new System.Drawing.Size(226, 20);
+            this.txtBackendPath.TabIndex = 2;
             // 
             // txtBackendPort
             // 
@@ -191,22 +207,6 @@
             this.pictureBox1.Size = new System.Drawing.Size(391, 56);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            // 
-            // txtBackendPath
-            // 
-            this.txtBackendPath.Location = new System.Drawing.Point(124, 126);
-            this.txtBackendPath.Name = "txtBackendPath";
-            this.txtBackendPath.Size = new System.Drawing.Size(226, 20);
-            this.txtBackendPath.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(22, 126);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(96, 19);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Backend Path:";
             // 
             // frmWizGeneral
             // 

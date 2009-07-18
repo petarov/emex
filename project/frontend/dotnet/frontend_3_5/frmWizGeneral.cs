@@ -38,6 +38,7 @@ namespace frontend_3_5
 
         private void frmAccountWiz1_Load(object sender, EventArgs e)
         {
+            this.Text = "EmEx General Configuration";
             SetupPanels();
             setState(SetupStates.SS_General);
         }

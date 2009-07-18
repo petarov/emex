@@ -71,6 +71,12 @@
     <Compile Include="frmMailView.Designer.cs">
       <DependentUpon>frmMailView.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmPassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPassword.Designer.cs">
+      <DependentUpon>frmPassword.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmStatus.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +111,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmMailView.resx">
       <DependentUpon>frmMailView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPassword.resx">
+      <DependentUpon>frmPassword.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmStatus.resx">

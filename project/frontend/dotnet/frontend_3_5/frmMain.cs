@@ -315,7 +315,7 @@ namespace frontend_3_5
                 {
                     if (id == Convert.ToString(t["id"]) )
                     {
-                        Result resMail = Bootstrap.Instance().Talker.GetMail(id, MailBoxPassword);
+                        Result resMail = Bootstrap.Instance().Talker.GetMail(id);
                         ErrorHandler.checkBizResult(resMail);
 
                         frmMailView frmMail = new frmMailView(resMail.return_[0]);

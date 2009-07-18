@@ -39,18 +39,23 @@ namespace frontend_3_5.BizTalk
                 hashSettings["backend_port"] = doc.SelectSingleNode("//backend/port").InnerText;
                 hashSettings["backend_path"] = doc.SelectSingleNode("//backend/path").InnerText;
                 hashSettings["account_address"] = doc.SelectSingleNode("//account/address").InnerText;
+                hashSettings["account_password"] = System.Text.Encoding.UTF8.GetString(
+                    Convert.FromBase64String(doc.SelectSingleNode("//account/password").InnerText) );
             }
         }
 
-        public void SaveAccountInfo(string account)
+        public void SaveAccountInfo(string account, string password)
         {
             log.Info("Saving Account Xml settings ...");
 
             XmlDocument doc = new XmlDocument();
             doc.Load(this.xmlSettingsPath);
             doc.SelectSingleNode("//account/address").InnerText = account;
+            doc.SelectSingleNode("//account/password").InnerText = Convert.ToBase64String( 
+                System.Text.Encoding.UTF8.GetBytes( password ) ); 
             doc.Save(this.xmlSettingsPath);
         }
+
 
         public void Save( Hashtable hashSettings )
         {
@@ -72,6 +77,14 @@ namespace frontend_3_5.BizTalk
             get
             {
                 return (string)hashSettings["account_address"]; 
+            }
+        }
+
+        public string AccountPassword
+        {
+            get
+            {
+                return (string)hashSettings["account_password"]; 
             }
         }
 

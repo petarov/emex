@@ -8,5 +8,6 @@
   </backend>
   <account>
     <address></address>
+    <password></password>
   </account>
 </emex-options>

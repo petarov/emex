@@ -39,7 +39,8 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "build_mbox",
-                "email", this.session.UserMail );
+                "email", this.session.UserMail,
+                "pass", this.settings.AccountPassword );
             return this.session.JSON2Result(json);
         }
 
@@ -80,14 +81,14 @@ namespace frontend_3_5.BizTalk
             return this.session.JSON2Result(json);
         }
 
-        public Result GetMail(string mailID, string mailBoxPassword)
+        public Result GetMail(string mailID)
         {
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "get_email",
                 "email", session.UserMail,
                 "id", mailID,
-                "pass", mailBoxPassword);
+                "pass", this.settings.AccountPassword);
             return this.session.JSON2Result(json);
         }
 
