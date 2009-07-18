@@ -126,6 +126,18 @@ namespace frontend_3_5.BizTalk
             return this.session.JSON2Result(json);
         }
 
+        public Result GetAttachment(string id)
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "get_attachment",
+                "email", session.UserMail,
+                "id", id,
+                "pass", this.settings.AccountPassword
+                );
+            return this.session.JSON2Result(json);
+        }
+
         public Result ListTags()
         {
             string json = this.session.request(

@@ -79,6 +79,7 @@
             this.columnHeader15 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader16 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader17 = new System.Windows.Forms.ColumnHeader();
+            this.dlgSaveFile = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageContacts.SuspendLayout();
@@ -278,6 +279,7 @@
             this.listViewAttachments.TabIndex = 0;
             this.listViewAttachments.UseCompatibleStateImageBehavior = false;
             this.listViewAttachments.View = System.Windows.Forms.View.Details;
+            this.listViewAttachments.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewAttachments_MouseDoubleClick);
             // 
             // columnHeader18
             // 
@@ -591,6 +593,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader16;
         private System.Windows.Forms.ColumnHeader columnHeader17;
         private System.Windows.Forms.Panel panelTags;
+        private System.Windows.Forms.SaveFileDialog dlgSaveFile;
     }
 }
 

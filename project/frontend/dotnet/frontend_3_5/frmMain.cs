@@ -306,6 +306,45 @@ namespace frontend_3_5
             }
         }
 
+        public void ShowDownloadAttachment(string name, string id)
+        {
+            //--- Show Download Attachment dialog
+            try
+            {
+                foreach (Hashtable t in resAttachments.return_)
+                {
+                    if (id == Convert.ToString(t["id"]))
+                    {
+                        Status = "Choose where to save attachment";
+                        dlgSaveFile.FileName = name;
+                        if (DialogResult.OK == dlgSaveFile.ShowDialog(this))
+                        {
+                            Status = "Retrieving attachment ...";
+                            Result resAttachment = Bootstrap.Instance().Talker.GetAttachment(id);
+                            ErrorHandler.checkBizResult(resAttachment);
+
+                            // we wait ...
+                            this.Cursor = Cursors.WaitCursor;
+
+                            string file = dlgSaveFile.FileName;
+                            byte[] filedata = Convert.FromBase64String( Convert.ToString(resAttachment.return_[0]["b64_content"]) );
+                            System.IO.FileStream fs = new System.IO.FileStream(file, System.IO.FileMode.CreateNew);
+                            fs.Write(filedata, 0, filedata.Length);
+                            fs.Close();
+                        }
+                        break;
+                    }
+                }
+                Status = "Done.";
+            }
+            catch (Exception ex)
+            {
+                new ErrorHandler(ex).Error();
+            }
+            
+            this.Cursor = Cursors.Arrow;
+        }
+
         public void ShowEditMail(string id)
         {
             //--- Show Mail Edit dialog
@@ -555,7 +594,7 @@ namespace frontend_3_5
 
         private void listViewMessages_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            //-- Open Mail
+            //-- Open Mail Click
             ListViewItem liv = listViewMessages.GetItemAt(e.X, e.Y);
             ShowEditMail(liv.SubItems[4].Text);
         }
@@ -576,7 +615,13 @@ namespace frontend_3_5
                 txtSearch.Clear();
         }
 
-        #endregion
+        private void listViewAttachments_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            // Download Attachment Click
+            ListViewItem liv = listViewAttachments.GetItemAt(e.X, e.Y);
+            ShowDownloadAttachment(liv.Text, liv.SubItems[3].Text);
+        }
 
+        #endregion
     }
 }
