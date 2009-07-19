@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections;
+using System.Threading;
 using log4net;
 using log4net.Config;
 
 using frontend_3_5.Proc;
+using frontend_3_5.Utils;
 
 namespace frontend_3_5
 {
@@ -17,8 +20,6 @@ namespace frontend_3_5
         [STAThread]
         static void Main()
         {
-            Bootstrap.Instance().configureLog();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());

@@ -498,14 +498,16 @@ namespace frontend_3_5
         private void frmMain_Load(object sender, EventArgs e)
         {
             // startup
-
             try
             {
                 Bootstrap.Instance().configure();
 
+                /*
+                Bootstrap.Instance().configure();
+
                 // configure backend & frontend
 
-                if ( ! Bootstrap.Instance().Settings.IsConfigured )
+                if (!Bootstrap.Instance().Settings.IsConfigured)
                 {
                     frmWizGeneral wizGeneral = new frmWizGeneral();
                     if (DialogResult.Cancel == wizGeneral.ShowDialog())
@@ -514,7 +516,7 @@ namespace frontend_3_5
 
                 // create/configure account (if not existing)
 
-                if ( ! Bootstrap.Instance().Settings.IsAccountConfigured )
+                if (!Bootstrap.Instance().Settings.IsAccountConfigured)
                 {
                     frmWizAccount wizAccount = new frmWizAccount();
                     if (DialogResult.Cancel == wizAccount.ShowDialog(this))
@@ -528,28 +530,39 @@ namespace frontend_3_5
                     Result res = Bootstrap.Instance().Talker.RegisterUser(bizSettings);
                     ErrorHandler.checkBizResult(res);
 
+                    // show splash
+                    splashScreen = new frmSplash();
+                    splashScreen.Show();
+
                     // rebuild mailbox
                     res = Bootstrap.Instance().Talker.BuildMbox();
                     ErrorHandler.checkBizResult(res);
                 }
                 else
                 {
+                    // show splash
+                    splashScreen = new frmSplash();
+                    splashScreen.Show();
+
                     Bootstrap.Instance().start();
                 }
+                */
 
                 // add accounts to reconfigured menu dynamically
                 ToolStripMenuItem tsi = (ToolStripMenuItem)menuStripMain.Items[1];
                 ToolStripMenuItem ddm = (ToolStripMenuItem)tsi.DropDownItems[0];
                 ToolStripMenuItem miAccount = new ToolStripMenuItem(
-                    Bootstrap.Instance().Settings.AccountAddress, 
+                    Bootstrap.Instance().Settings.AccountAddress,
                     imgListContacts.Images[0],
                     new System.EventHandler(ReconfigureAccount_Click)
                     );
                 ddm.DropDownItems.Add(miAccount);
+
             }
             catch (Exception ex)
             {
                 new ErrorHandler(ex).Error();
+                SplashManager.Instance().close();
                 this.Close();
             }
         }
