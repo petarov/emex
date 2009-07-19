@@ -23,7 +23,7 @@ XCOPY %PROJECT_PATH%\data\conf\*.xml %DIST_EMEX%%\data\conf\ /E /C /F /R /Y
 XCOPY %PROJECT_PATH%\data\db\prototype-acc.s3db %DIST_EMEX%%\data\db\ /E /C /F /R /Y
 mkdir %DIST_EMEX%%\data\logs 
 mkdir %DIST_EMEX%%\data\tmp 
-XCOPY %PROJECT_PATH%\scripts\*.bat %DIST_EMEX%%\scripts\ /E /C /F /R /Y
+XCOPY %PROJECT_PATH%\scripts\install-required-perl-modules.bat %DIST_EMEX%%\scripts\ /E /C /F /R /Y
 
 echo Copying Backend files ...
 XCOPY %PROJECT_PATH%\backend\*.pl %DIST_EMEX%%\backend\ /E /C /F /R /Y
@@ -34,8 +34,8 @@ XCOPY %PROJECT_PATH%\frontend\dotnet\bin\biztalk.dll %DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\biztalk_appender.xml %DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\emex-options.xml.template %DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\frontend_3_5.exe %DIST_EMEX%%\ /C /F /R /Y
-XCOPY %PROJECT_PATH%\frontend\dotnet\bin\frontend_3_5.exe.config%DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\frontend_3_5.exe.config %DIST_EMEX%%\ /C /F /R /Y
+XCOPY %PROJECT_PATH%\frontend\dotnet\bin\frontend_appender.xml %DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\log4net.dll %DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\log4net.xml %DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\frontend\dotnet\bin\Newtonsoft.Json.dll %DIST_EMEX%%\ /C /F /R /Y
