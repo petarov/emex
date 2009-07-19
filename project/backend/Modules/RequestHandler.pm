@@ -44,6 +44,7 @@ my %resources = (
 	R_LIST_MAILS_BY_SEARCHTAG => '/list_mails_by_searchtag',
 	R_LIST_CONTACT_MAILS => '/list_contact_mails',
 	R_LIST_ATTACHMENTS => '/list_attachments',
+	R_GET_ATTACHMENT => '/get_attachment',
 	R_GET_EMAIL => '/get_email',
 	R_SEND_EMAIL => '/send_email',
 	R_SEARCH_EMAIL => '/search_email',
@@ -132,7 +133,7 @@ sub handle_method_get {
 		}		
 	}	
 	elsif ( /^$resources{R_EDIT_CONTACT}$/ ) {
-		# get list of contacts
+		# edit contact info
 		if ( http_validate_params( $uri, qw(email id) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->edit_contact( $uri->query_form_hash ); 
@@ -143,7 +144,7 @@ sub handle_method_get {
 		}		
 	}	
 	elsif ( /^$resources{R_LIST_MAILS}$/ ) {
-		# get list of contacts
+		# get list of all e-mails
 		if ( http_validate_params( $uri, qw(email) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->list_mails(); 
@@ -154,7 +155,7 @@ sub handle_method_get {
 		}		
 	}	
 	elsif ( /^$resources{R_LIST_TAGS}$/ ) {
-		# get list of contacts
+		# get list of all tags
 		if ( http_validate_params( $uri, qw(email) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->list_tags(); 
@@ -165,7 +166,7 @@ sub handle_method_get {
 		}		
 	}		
 	elsif ( /^$resources{R_LIST_CONTACT_MAILS}$/ ) {
-		# get list of contacts
+		# get list of e-mails for given contact
 		if ( http_validate_params( $uri, qw(email id) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->list_contact_mails( $uri->query_param('id') ); 
@@ -176,7 +177,7 @@ sub handle_method_get {
 		}		
 	}		
 	elsif ( /^$resources{R_LIST_ATTACHMENTS}$/ ) {
-		# get list of contacts
+		# get list of attachments
 		if ( http_validate_params( $uri, qw(email) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->list_attachments(); 
@@ -186,8 +187,19 @@ sub handle_method_get {
 			$valid_params = 0;
 		}		
 	}
+	elsif ( /^$resources{R_GET_ATTACHMENT}$/ ) {
+		# download attachment
+		if ( http_validate_params( $uri, qw(email id pass) ) ) {
+			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
+			my $json = $mbox->get_attachment( $uri->query_param('id'), $uri->query_param('pass') ); 
+			$response = http_response_ok( $json );
+		}
+		else {
+			$valid_params = 0;
+		}		
+	}	
 	elsif ( /^$resources{R_LIST_MAILS_BY_SEARCHTAG}$/ ) {
-		# get list of contacts
+		# get list of e-mails that match tag
 		if ( http_validate_params( $uri, qw(email tagid) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->list_mails_by_searchtag( $uri->query_param('tagid') ); 
@@ -198,7 +210,7 @@ sub handle_method_get {
 		}		
 	}	
 	elsif ( /^$resources{R_GET_EMAIL}$/ ) {
-		# get list of contacts
+		# get specific e-mail
 		if ( http_validate_params( $uri, qw(email id pass) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->get_email( $uri->query_param('id'), $uri->query_param('pass') ); 
@@ -209,7 +221,7 @@ sub handle_method_get {
 		}		
 	}		
 	elsif ( /^$resources{R_SEARCH_EMAIL}$/ ) {
-		# get list of contacts
+		# search e-mail by tag 
 		if ( http_validate_params( $uri, qw(email word) ) ) {
 			my $mbox = Modules::Mailbox->new( $uri->query_param('email') );
 			my $json = $mbox->search( $uri->query_param('word') ); 
