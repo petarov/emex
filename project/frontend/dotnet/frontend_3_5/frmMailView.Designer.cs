@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMailView));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.label1 = new System.Windows.Forms.Label();
             this.txtFrom = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -44,7 +45,6 @@
             this.txtBody = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,6 +69,16 @@
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Text = "toolStripButton1";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton2.Text = "toolStripButton2";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // label1
             // 
@@ -183,16 +193,6 @@
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "toolStripButton2";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // frmMailView
             // 

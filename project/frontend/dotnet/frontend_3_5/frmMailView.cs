@@ -98,11 +98,14 @@ namespace frontend_3_5
                 txtBCC.Text = Convert.ToString(hashMailInfo["BCC"]);
                 txtSubject.Text = Convert.ToString(hashMailInfo["SUBJECT"]);
                 txtBody.Text = Convert.ToString(hashMailInfo["BODY"]);
+
+                txtFrom.ReadOnly = txtTo.ReadOnly = txtCC.ReadOnly = txtBCC.ReadOnly = true;
+                //txtSubject.Enabled = txtBody.Enabled = false;
             }
             if (this.from != string.Empty)
             {
                 txtFrom.Text = this.from;
-                txtFrom.Enabled = false;
+                txtFrom.ReadOnly = true;
             }
             if (this.to != string.Empty)
             {

@@ -155,6 +155,7 @@
     </Compile>
     <Compile Include="Utils\CorporateIdentity.cs" />
     <Compile Include="Utils\ErrorHandler.cs" />
+    <Compile Include="Utils\Tools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icons-test-export.jpg" />
