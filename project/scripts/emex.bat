@@ -11,7 +11,7 @@ set EMEX_PATH=%~dp0
 echo Starting Backend ...
 
 cd backend
-start "EmEx Backend" /NORMAL /I perl "bootstrap.pl"
+start "EmEx Backend" /NORMAL /MIN perl "bootstrap.pl"
 
 cd ..
 call frontend_3_5.exe
