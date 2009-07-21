@@ -35,7 +35,7 @@ sub new {
 }
 
 sub start {
-	my ($self,$host,$port) = @_;
+	my ($self, $host, $port) = @_;
 	
 	$logger->info(qq/Starting server on $self->{host}:$self->{port} ... /);
 	
@@ -84,6 +84,25 @@ sub stop {
 	$stopit = 1;
 	$logger->info('Server Stopping ... ');
 }
+
+sub send_basic_auth_request {
+	my ($c, $realm)      = @_;
+	$realm               = 'Restricted Area' if !$realm;
+	my $auth_request_res = HTTP::Response->new(401, 'Unauthorized');
+	$auth_request_res->header('WWW-Authenticate' => qq{Basic realm="$realm"});
+	$auth_request_res->is_error(1);
+    $auth_request_res->error_as_HTML(1);
+	$c->send_response($auth_request_res);
+}
+
+sub decode_basic_auth {
+	my ($auth) = @_;
+	no warnings 'uninitialized';
+    $auth = ( split /\s+/, $auth->header('Authorization') )[1] if ref $auth;
+    require MIME::Base64;
+    return split(/:/, MIME::Base64::decode( $auth ), 2);
+}
+
 
 
 1;

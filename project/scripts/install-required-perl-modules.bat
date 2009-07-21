@@ -1,3 +1,4 @@
+@echo off
 REM #******************************************************************************
 REM # File: 		install-required-perl-modules.bat
 REM # Author:       Petar Petrov <pro.xex@gmail.com>
@@ -5,8 +6,6 @@ REM # Description:  Batch install of all required CPAN modules
 REM #               NOTE: These are required for a "Strawberry Perl" installation !
 REM #
 REM #******************************************************************************
-
-@echo off
 
 echo Installing Perl Modules ...
 
