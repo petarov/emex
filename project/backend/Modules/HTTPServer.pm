@@ -25,17 +25,20 @@ my $logger = Modules::Logger::create(__PACKAGE__);
 my $stopit = 0;
 
 sub new {
-	my ($class, $host, $port) = @_;
+	my ($class, $host, $port, $authname, $authpass) = @_;
 	$class = ref($class) || $class;
 	my $self = bless {
 		'host' => $host,
 		'port' => $port,
+		'authname' => $authname,
+		'authpass' => $authpass,
+		'authenticated' => 0,
 	}, $class;
 	return $self;
 }
 
 sub start {
-	my ($self, $host, $port) = @_;
+	my ($self) = @_;
 	
 	$logger->info(qq/Starting server on $self->{host}:$self->{port} ... /);
 	
@@ -51,11 +54,22 @@ sub start {
   	while(my $client = $d->accept  ) {
   		while(my $req = $client->get_request) {
   			if ( $req->method eq 'GET' ) {
-  				my $req = Modules::RequestHandler->new( $req->uri, $req->url->path );
-  				my $resp = $req->handle_method_get($req);
-  				# is there a QUIT/EXIT signal ?
-  				$stopit = $req->is_quit_signal();
-  				$client->send_response( $resp );
+				my ($auth_user, $auth_pass) = $self->decode_basic_auth( $req );
+				print "$auth_user\n";
+				print "$auth_pass\n";
+				if ( $auth_user && $auth_pass && 
+					($auth_user eq $self->{authname} && $auth_pass eq $self->{authpass}) ) {
+ 					my $req = Modules::RequestHandler->new( $req->uri, $req->url->path );
+  					my $resp = $req->handle_method_get($req);
+  				 	#is there a QUIT/EXIT signal ?
+  					$stopit = $req->is_quit_signal();
+  					$client->send_response( $resp );
+				}
+				else {
+					# send authentication request
+					my $resp_auth = $self->send_basic_auth_request('EmEx HTTP server requires authentication');
+					$client->send_response( $resp_auth );  						
+				}
   			}
   			elsif( $req->method eq 'POST' ) {
   				my $full_uri = $req->uri . '/?' .$req->content;  # just simulate like GET request
@@ -86,17 +100,18 @@ sub stop {
 }
 
 sub send_basic_auth_request {
-	my ($c, $realm)      = @_;
+	my ($self, $realm)      = @_;
 	$realm               = 'Restricted Area' if !$realm;
 	my $auth_request_res = HTTP::Response->new(401, 'Unauthorized');
 	$auth_request_res->header('WWW-Authenticate' => qq{Basic realm="$realm"});
 	$auth_request_res->is_error(1);
     $auth_request_res->error_as_HTML(1);
-	$c->send_response($auth_request_res);
+    return $auth_request_res;
+	#$c->send_response($auth_request_res);
 }
 
 sub decode_basic_auth {
-	my ($auth) = @_;
+	my ($self, $auth) = @_;
 	no warnings 'uninitialized';
     $auth = ( split /\s+/, $auth->header('Authorization') )[1] if ref $auth;
     require MIME::Base64;

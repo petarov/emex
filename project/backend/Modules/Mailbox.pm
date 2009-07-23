@@ -770,6 +770,26 @@ sub list_attachments {
 	return Modules::ResponseHandler->new()->response_ok( $hash_ref );	  
 }
 
+sub list_contact_attachments {
+	my ($self, $userid) = @_;
+
+	my $db_handle = $self->_open_database()
+	  or return Modules::ResponseHandler->new()->response_fail('Failed to open database!');
+	  
+	my $sth = $db_handle->prepare(qq/SELECT Attachment.id, email_id, name, type, Conversant.email  
+		FROM Attachment 
+		LEFT OUTER JOIN Conversant ON Conversant.id = Attachment.conversant_id 
+		WHERE Attachment.conversant_id=?/);
+	$sth->bind_param( 1, $userid, SQL_INTEGER );
+	$sth->execute;
+	
+	my $hash_ref = $sth->fetchall_arrayref({});
+	$db_handle->disconnect();	
+		
+	$db_handle->disconnect();	  
+	return Modules::ResponseHandler->new()->response_ok( $hash_ref );
+}
+
 sub get_attachment {
 	my ($self, $id, $pass) = @_;
 

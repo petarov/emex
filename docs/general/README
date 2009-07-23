@@ -1,4 +1,6 @@
 .o: EmEx :o.
+
+
 README FILE
 
 
@@ -19,6 +21,10 @@ Requirements
  When using the Win32 client, make sure you have .NET Framework 3.5 installed. This 
  should be available anyway with Windows XP SP3.
 
+ 3. Testing tools
+ 
+ o  Hamster.2.1.0.11 (http://www.arcorhome.de/newshamster/tgl/misc/hamster_en.html)
+ o  Mozilla Thunderbird E-Mail Client
 
 
 Known Issues
