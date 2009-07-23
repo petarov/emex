@@ -4,6 +4,10 @@
   <backend>
     <server>127.0.0.1</server>
     <port>8080</port>
+    <authentication>
+      <username></username>
+      <password></password>
+    </authentication>
     <path></path>
   </backend>
   <account>

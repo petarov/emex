@@ -21,6 +21,8 @@ namespace frontend_3_5.BizTalk
             this.session = new Session(
                 settings["backend_server"],
                 Convert.ToInt32( settings["backend_port"] ),
+                settings["backend_auth_user"],
+                settings["backend_auth_pass"],
                 settings["account_address"]
                 );
         }
@@ -39,7 +41,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "build_mbox",
-                "email", this.session.UserMail,
+                "email", this.settings.AccountAddress,
                 "pass", this.settings.AccountPassword );
             return this.session.JSON2Result(json);
         }
@@ -58,7 +60,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "list_users",
-                "email", session.UserMail);
+                "email", settings.AccountAddress);
             return this.session.JSON2Result(json);
         }
 
@@ -67,7 +69,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "list_mails",
-                "email", session.UserMail);
+                "email", settings.AccountAddress);
             return this.session.JSON2Result(json);
         }
 
@@ -76,7 +78,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "list_mails_by_searchtag",
-                "email", session.UserMail,
+                "email", settings.AccountAddress,
                 "tagid", tagID );
             return this.session.JSON2Result(json);
         }
@@ -86,7 +88,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "get_email",
-                "email", session.UserMail,
+                "email", settings.AccountAddress,
                 "id", mailID,
                 "pass", this.settings.AccountPassword);
             return this.session.JSON2Result(json);
@@ -97,7 +99,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_POST,
                 "send_email",
-                "email", session.UserMail,
+                "email", settings.AccountAddress,
                 "to", To,
                 "cc", Cc,
                 "bcc", Bcc,
@@ -112,7 +114,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "list_contact_mails",
-                "email", session.UserMail,
+                "email", settings.AccountAddress,
                 "id", contactId );
             return this.session.JSON2Result(json);
         }
@@ -122,7 +124,17 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "list_attachments",
-                "email", session.UserMail);
+                "email", settings.AccountAddress);
+            return this.session.JSON2Result(json);
+        }
+
+        public Result ListContactAttachments(string contactId)
+        {
+            string json = this.session.request(
+                Session.RequestType.RT_GET,
+                "list_contact_attachments",
+                "email", settings.AccountAddress,
+                "id", contactId);
             return this.session.JSON2Result(json);
         }
 
@@ -131,7 +143,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "get_attachment",
-                "email", session.UserMail,
+                "email", settings.AccountAddress,
                 "id", id,
                 "pass", this.settings.AccountPassword
                 );
@@ -143,7 +155,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "list_tags",
-                "email", session.UserMail);
+                "email", settings.AccountAddress);
             return this.session.JSON2Result(json);
         }
 
@@ -152,7 +164,7 @@ namespace frontend_3_5.BizTalk
             string json = this.session.request(
                 Session.RequestType.RT_GET,
                 "search_email",
-                "email", session.UserMail,
+                "email", settings.AccountAddress,
                 "word", word
                 );
             return this.session.JSON2Result(json);

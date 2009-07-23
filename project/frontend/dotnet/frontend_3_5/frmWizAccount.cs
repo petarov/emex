@@ -137,8 +137,15 @@ namespace frontend_3_5
 
                 case SetupStates.SS_ServerInfo:
                     lblTitle.Text = "Server Information";
-                    
                     resetPanels();
+
+                    // auto fill-in info 
+                    string[] creds = txtEmailAddress.Text.Trim().Split('@');
+                    txtIncomingServer.Text = creds[1];
+                    txtUserName.Text = creds[0];
+                    txtSMTP.Text = creds[1];
+                    txtSMTPUsername.Text = creds[0];
+
                     panelServerInformation.Show();
                     break;
 

@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("frontend_3_5")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Email Extended Client")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("frontend_3_5")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2009")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("EmEx")]
+[assembly: AssemblyProduct("EmEx")]
+[assembly: AssemblyCopyright("Copyright © EmEx 2009")]
+[assembly: AssemblyTrademark("EmEx")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

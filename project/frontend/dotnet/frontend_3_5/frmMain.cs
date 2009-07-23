@@ -99,6 +99,46 @@ namespace frontend_3_5
             }
         }
 
+        public void refreshAttachmentsForContact(string email)
+        {
+            //--- Refresh EMails
+            try
+            {
+                //find user
+                string userId = string.Empty;
+                this.Cursor = Cursors.WaitCursor; // wait a while
+                foreach (Hashtable t in resContacts.return_)
+                {
+                    if (email == Convert.ToString(t["email"]))
+                    {
+                        userId = Convert.ToString(t["id"]);
+                        break;
+                    }
+                }
+                if (userId == string.Empty)
+                    throw new Exception("Failed to find user " + email + " !");
+
+                tabControlMain.SelectTab("tabPageAttachments");
+                //tabPageMails.Show();
+
+                Status = "Retrieving all attachments for user ...";
+                this.Cursor = Cursors.WaitCursor; // wait a while
+                resAttachments = Bootstrap.Instance().Talker.ListContactAttachments(userId);
+                ErrorHandler.checkBizResult(resAttachments);
+                viewAttachments(resAttachments.return_);
+                Status = "Done.";
+            }
+            catch (Exception ex)
+            {
+                Status = "Error while getting attachments for user!";
+                new ErrorHandler(ex).Error();
+            }
+            finally
+            {
+                this.Cursor = Cursors.Arrow;
+            }
+        }
+
         public void refreshMailsForTag(string tagID)
         {
             //--- Refresh EMails
@@ -480,12 +520,31 @@ namespace frontend_3_5
         private void ReconfigureAccount_Click(object sender, EventArgs e)
         {
             //-- Tag was clicked (TagsView)
-            //MenuItem menuItem = (MenuItem)sender;
-            frmWizAccount wizAccount = new frmWizAccount();
-            wizAccount.ShowDialog(this);
-            //if (DialogResult.Cancel == wizAccount.ShowDialog(this))
-              //  throw new Exception("EmEx cannot start without configuring an account!");
+            ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
 
+            //TODO: remove from here !
+            try
+            {
+                frmWizAccount wizAccount = new frmWizAccount();
+                if (DialogResult.Cancel == wizAccount.ShowDialog())
+                    throw new Exception("EmEx cannot start without configuring an account!");
+
+                Bootstrap.Instance().Settings.Reload();
+                Bootstrap.Instance().start();
+
+                // register user
+                Hashtable bizSettings = wizAccount.AccountInfo;
+                Result res = Bootstrap.Instance().Talker.RegisterUser(bizSettings);
+                ErrorHandler.checkBizResult(res);
+
+                // rebuild mailbox
+                res = Bootstrap.Instance().Talker.BuildMbox();
+                ErrorHandler.checkBizResult(res);
+            }
+            catch (Exception ex)
+            {
+                new ErrorHandler(ex).Error();
+            }
         }
 
         // -----------
@@ -497,67 +556,22 @@ namespace frontend_3_5
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            // startup
             try
             {
                 Bootstrap.Instance().configure();
 
-                /*
-                Bootstrap.Instance().configure();
-
-                // configure backend & frontend
-
-                if (!Bootstrap.Instance().Settings.IsConfigured)
-                {
-                    frmWizGeneral wizGeneral = new frmWizGeneral();
-                    if (DialogResult.Cancel == wizGeneral.ShowDialog())
-                        throw new Exception("EmEx cannot start without configuration!");
-                }
-
-                // create/configure account (if not existing)
-
-                if (!Bootstrap.Instance().Settings.IsAccountConfigured)
-                {
-                    frmWizAccount wizAccount = new frmWizAccount();
-                    if (DialogResult.Cancel == wizAccount.ShowDialog(this))
-                        throw new Exception("EmEx cannot start without configuring an account!");
-
-                    Bootstrap.Instance().Settings.Reload();
-                    Bootstrap.Instance().start();
-
-                    // register user
-                    Hashtable bizSettings = wizAccount.AccountInfo;
-                    Result res = Bootstrap.Instance().Talker.RegisterUser(bizSettings);
-                    ErrorHandler.checkBizResult(res);
-
-                    // show splash
-                    splashScreen = new frmSplash();
-                    splashScreen.Show();
-
-                    // rebuild mailbox
-                    res = Bootstrap.Instance().Talker.BuildMbox();
-                    ErrorHandler.checkBizResult(res);
-                }
-                else
-                {
-                    // show splash
-                    splashScreen = new frmSplash();
-                    splashScreen.Show();
-
-                    Bootstrap.Instance().start();
-                }
-                */
-
                 // add accounts to reconfigured menu dynamically
                 ToolStripMenuItem tsi = (ToolStripMenuItem)menuStripMain.Items[1];
                 ToolStripMenuItem ddm = (ToolStripMenuItem)tsi.DropDownItems[0];
-                ToolStripMenuItem miAccount = new ToolStripMenuItem(
-                    Bootstrap.Instance().Settings.AccountAddress,
-                    imgListContacts.Images[0],
-                    new System.EventHandler(ReconfigureAccount_Click)
-                    );
+                ToolStripMenuItem miAccount = new ToolStripMenuItem( 
+                    Bootstrap.Instance().Settings.AccountAddress, imgListContacts.Images[0] );
                 ddm.DropDownItems.Add(miAccount);
-
+                ToolStripMenuItem miReconfigure = new ToolStripMenuItem("Reconfigure",
+                    imgListContacts.Images[1],
+                    new System.EventHandler(ReconfigureAccount_Click));
+                
+                miReconfigure.Tag = Bootstrap.Instance().Settings.AccountAddress;
+                miAccount.DropDownItems.Add(miReconfigure);
             }
             catch (Exception ex)
             {
@@ -571,6 +585,12 @@ namespace frontend_3_5
         {
             //TODO: confirm
             this.Close();
+        }
+
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            frmSplash splash = new frmSplash(true);
+            splash.ShowDialog();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -670,7 +690,7 @@ namespace frontend_3_5
         {
             //-- Context Menu (View Attachments)
             if (livContactCurrent != null)
-                ShowEditUser(livContactCurrent.Text);
+                refreshAttachmentsForContact(livContactCurrent.Text);
         }
 
         private void toolStripMenuMails_Click(object sender, EventArgs e)

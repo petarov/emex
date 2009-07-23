@@ -37,6 +37,8 @@ namespace frontend_3_5.BizTalk
                 hashSettings["configured"] = doc.SelectSingleNode("//configured").InnerText;
                 hashSettings["backend_server"] = doc.SelectSingleNode("//backend/server").InnerText;
                 hashSettings["backend_port"] = doc.SelectSingleNode("//backend/port").InnerText;
+                hashSettings["backend_auth_user"] = doc.SelectSingleNode("//backend/authentication/username").InnerText;
+                hashSettings["backend_auth_pass"] = doc.SelectSingleNode("//backend/authentication/password").InnerText;
                 hashSettings["backend_path"] = doc.SelectSingleNode("//backend/path").InnerText;
                 hashSettings["account_address"] = doc.SelectSingleNode("//account/address").InnerText;
                 hashSettings["account_password"] = System.Text.Encoding.UTF8.GetString(
@@ -63,9 +65,11 @@ namespace frontend_3_5.BizTalk
 
             XmlDocument doc = new XmlDocument();
             doc.Load(this.xmlSettingsPath);
-            doc.SelectSingleNode("//backend/server").InnerText = (string)hashSettings["backend_server"];
-            doc.SelectSingleNode("//backend/port").InnerText = (string)hashSettings["backend_port"];
-            doc.SelectSingleNode("//backend/path").InnerText = (string)hashSettings["backend_path"];
+            doc.SelectSingleNode("//backend/server").InnerText = Convert.ToString(hashSettings["backend_server"]);
+            doc.SelectSingleNode("//backend/port").InnerText = Convert.ToString(hashSettings["backend_port"]);
+            doc.SelectSingleNode("//backend/path").InnerText = Convert.ToString(hashSettings["backend_path"]);
+            doc.SelectSingleNode("//backend/authentication/username").InnerText = Convert.ToString(hashSettings["backend_user"]);
+            doc.SelectSingleNode("//backend/authentication/password").InnerText = Convert.ToString(hashSettings["backend_pass"]);
             //this.doc.SelectSingleNode("//account/address").Value = (string)hashSettings["backend_path"];
             doc.SelectSingleNode("//configured").InnerText = "true";
             

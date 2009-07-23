@@ -14,14 +14,5 @@ namespace biztalk
             this.session = session;
         }
 
-        public Result GetContacts()
-        {
-            string res = session.request(
-                Session.RequestType.RT_GET,
-                "list_users",
-                "email", session.UserMail
-                );
-            return session.JSON2Result(res);
-        }
     }
 }

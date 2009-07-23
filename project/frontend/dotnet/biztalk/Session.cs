@@ -26,27 +26,32 @@ namespace biztalk
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private Logger logger = new Logger();
         private string server;
+        private string authuser;
+        private string authpass;
         private int port = 80;
         private WebProxy proxy = null;
         private string userMail = string.Empty;
 
-        public Session( string server, int port, string userMailAddress )
+        public Session( string server, int port, string authuser, string authpass, string userMailAddress )
         {
             logger.init();
             this.server = server;
             this.port = port;
+            this.authuser = authuser;
+            this.authpass = authpass;
             this.userMail = userMailAddress;
 
             log.Debug(String.Format("Create session with server={0}, port={1}", server, port));
         }
 
-        public Session(string server, int port, string userMailAddress, string proxyhost, int proxyport)
-            : this(server, port, userMailAddress)
+        public Session(string server, int port, string authuser, string authpass, string userMailAddress, string proxyhost, int proxyport)
+            : this(server, port, authuser, authpass, userMailAddress)
         {
             proxy = new WebProxy(proxyhost, proxyport);
             log.Debug(String.Format("Added session proxy - host={0}, port={1}", proxyhost, proxyport));
         }
 
+        /*
         public string UserMail
         {
             get
@@ -54,6 +59,7 @@ namespace biztalk
                 return this.userMail;
             }
         }
+        */
 
         public Uri Url
         {
@@ -117,9 +123,10 @@ namespace biztalk
                 log.Debug("GET " + myUri.ToString());
 
                 req = (HttpWebRequest)System.Net.WebRequest.Create(myUri);
-                req.Proxy = this.proxy;
                 req.Method = "GET";
                 req.ContentType = "text/plain";
+                req.Credentials = new NetworkCredential(this.authuser, this.authpass);
+                req.Proxy = this.proxy;
             }
             else if (RequestType.RT_POST == type)
             {
@@ -127,9 +134,10 @@ namespace biztalk
                 log.Debug("POST " + myUri.ToString());
 
                 req = (HttpWebRequest)System.Net.WebRequest.Create(myUri);
-                req.Proxy = this.proxy;
                 req.Method = "POST";
                 req.ContentType = "application/x-www-form-urlencoded";
+                req.Credentials = new NetworkCredential(this.authuser, this.authpass);
+                req.Proxy = this.proxy;
 
                 byte[] buffer = Encoding.UTF8.GetBytes(_getParamsFromHash(args));
                 Stream stream = req.GetRequestStream();

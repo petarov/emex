@@ -64,7 +64,7 @@ namespace frontend_3_5
 
             txtBackendServer.Text = "127.0.0.1";
             txtBackendPort.Text = "8080";
-            txtBackendPath.Text = Environment.CurrentDirectory;
+            txtBackendPath.Text = Environment.GetEnvironmentVariable("EMEX_PATH");
 
             resetPanels();
         }
@@ -89,11 +89,17 @@ namespace frontend_3_5
                     this.hashAccountInfo["backend_server"] = txtBackendServer.Text.Trim();
                     this.hashAccountInfo["backend_port"] = txtBackendPort.Text.Trim();
                     this.hashAccountInfo["backend_path"] = txtBackendPath.Text.Trim();
+                    this.hashAccountInfo["backend_user"] = txtBackendUser.Text.Trim();
+                    this.hashAccountInfo["backend_pass"] = txtBackendPassword.Text.Trim();
 
                     // show info
                     lblReviewAll.Text = "Backend Server: " + this.hashAccountInfo["backend_server"];
                     lblReviewAll.Text += Environment.NewLine;
                     lblReviewAll.Text += "Backend Port: " + this.hashAccountInfo["backend_port"];
+                    lblReviewAll.Text += Environment.NewLine;
+                    lblReviewAll.Text += "Backend Username: " + this.hashAccountInfo["backend_user"];
+                    lblReviewAll.Text += Environment.NewLine;
+                    lblReviewAll.Text += "Backend Password: " + this.hashAccountInfo["backend_pass"];
                     lblReviewAll.Text += Environment.NewLine;
                     lblReviewAll.Text += "Backend Path: " + this.hashAccountInfo["backend_path"];
                     lblReviewAll.Text += Environment.NewLine;
@@ -137,7 +143,6 @@ namespace frontend_3_5
 
                 case SetupStates.SS_Review:
                     // FINISH !
-
                     try
                     {
                         Bootstrap.Instance().Settings.Save(this.hashAccountInfo);
@@ -148,7 +153,6 @@ namespace frontend_3_5
                     {
                         new ErrorHandler(ex).Error();
                     }
-
                     break;
             }
         }

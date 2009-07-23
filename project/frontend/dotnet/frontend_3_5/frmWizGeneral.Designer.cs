@@ -34,10 +34,8 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.panelGeneral = new System.Windows.Forms.Panel();
             this.label7 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.lblGeneral = new System.Windows.Forms.Label();
-            this.txtBackendPath = new System.Windows.Forms.TextBox();
             this.txtBackendPort = new System.Windows.Forms.TextBox();
             this.txtBackendServer = new System.Windows.Forms.TextBox();
             this.panelReview = new System.Windows.Forms.Panel();
@@ -45,6 +43,12 @@
             this.lblReview2 = new System.Windows.Forms.Label();
             this.lblReview = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.txtBackendUser = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtBackendPassword = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtBackendPath = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.panelGeneral.SuspendLayout();
             this.panelReview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -97,11 +101,15 @@
             // panelGeneral
             // 
             this.panelGeneral.Controls.Add(this.label7);
-            this.panelGeneral.Controls.Add(this.label1);
+            this.panelGeneral.Controls.Add(this.label5);
+            this.panelGeneral.Controls.Add(this.label3);
+            this.panelGeneral.Controls.Add(this.label2);
             this.panelGeneral.Controls.Add(this.label4);
             this.panelGeneral.Controls.Add(this.lblGeneral);
             this.panelGeneral.Controls.Add(this.txtBackendPath);
             this.panelGeneral.Controls.Add(this.txtBackendPort);
+            this.panelGeneral.Controls.Add(this.txtBackendPassword);
+            this.panelGeneral.Controls.Add(this.txtBackendUser);
             this.panelGeneral.Controls.Add(this.txtBackendServer);
             this.panelGeneral.Location = new System.Drawing.Point(2, 62);
             this.panelGeneral.Name = "panelGeneral";
@@ -116,15 +124,6 @@
             this.label7.Size = new System.Drawing.Size(96, 19);
             this.label7.TabIndex = 3;
             this.label7.Text = "Backend Port:";
-            // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(22, 126);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(96, 19);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "EmEx Path:";
             // 
             // label4
             // 
@@ -143,26 +142,19 @@
             this.lblGeneral.TabIndex = 1;
             this.lblGeneral.Text = "label2";
             // 
-            // txtBackendPath
-            // 
-            this.txtBackendPath.Location = new System.Drawing.Point(124, 126);
-            this.txtBackendPath.Name = "txtBackendPath";
-            this.txtBackendPath.Size = new System.Drawing.Size(226, 20);
-            this.txtBackendPath.TabIndex = 2;
-            // 
             // txtBackendPort
             // 
-            this.txtBackendPort.Location = new System.Drawing.Point(124, 101);
+            this.txtBackendPort.Location = new System.Drawing.Point(149, 101);
             this.txtBackendPort.MaxLength = 5;
             this.txtBackendPort.Name = "txtBackendPort";
-            this.txtBackendPort.Size = new System.Drawing.Size(84, 20);
+            this.txtBackendPort.Size = new System.Drawing.Size(59, 20);
             this.txtBackendPort.TabIndex = 2;
             // 
             // txtBackendServer
             // 
-            this.txtBackendServer.Location = new System.Drawing.Point(124, 76);
+            this.txtBackendServer.Location = new System.Drawing.Point(149, 76);
             this.txtBackendServer.Name = "txtBackendServer";
-            this.txtBackendServer.Size = new System.Drawing.Size(226, 20);
+            this.txtBackendServer.Size = new System.Drawing.Size(201, 20);
             this.txtBackendServer.TabIndex = 2;
             // 
             // panelReview
@@ -207,6 +199,54 @@
             this.pictureBox1.Size = new System.Drawing.Size(391, 56);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            // 
+            // txtBackendUser
+            // 
+            this.txtBackendUser.Location = new System.Drawing.Point(149, 127);
+            this.txtBackendUser.Name = "txtBackendUser";
+            this.txtBackendUser.Size = new System.Drawing.Size(201, 20);
+            this.txtBackendUser.TabIndex = 2;
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Location = new System.Drawing.Point(22, 127);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(121, 19);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Backend Username:";
+            // 
+            // txtBackendPassword
+            // 
+            this.txtBackendPassword.Location = new System.Drawing.Point(149, 153);
+            this.txtBackendPassword.Name = "txtBackendPassword";
+            this.txtBackendPassword.Size = new System.Drawing.Size(201, 20);
+            this.txtBackendPassword.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.Location = new System.Drawing.Point(22, 153);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(121, 19);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "Backend Password:";
+            // 
+            // txtBackendPath
+            // 
+            this.txtBackendPath.Location = new System.Drawing.Point(149, 179);
+            this.txtBackendPath.Name = "txtBackendPath";
+            this.txtBackendPath.Size = new System.Drawing.Size(201, 20);
+            this.txtBackendPath.TabIndex = 2;
+            // 
+            // label5
+            // 
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label5.Location = new System.Drawing.Point(22, 179);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(96, 19);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "EmEx Path:";
             // 
             // frmWizGeneral
             // 
@@ -253,8 +293,12 @@
         private System.Windows.Forms.Label lblReviewAll;
         private System.Windows.Forms.Label lblReview2;
         private System.Windows.Forms.Label lblReview;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtBackendPath;
+        private System.Windows.Forms.TextBox txtBackendPassword;
+        private System.Windows.Forms.TextBox txtBackendUser;
 
     }
 }

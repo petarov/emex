@@ -16,7 +16,7 @@ namespace biztalk_console
 
         public void test_1()
         {
-            Session bs = new Session("127.0.0.1", 8080, USER);
+            Session bs = new Session("127.0.0.1", 8080, USER, "emex", "emex" );
             Hashtable h = new Hashtable();
             h["email"] = "deyan.imap@localhost";
             h["word"] = "message";
@@ -39,7 +39,7 @@ namespace biztalk_console
         {
             // SEND MAIL
 
-            Session bs = new Session("127.0.0.1", 8080, USER);
+            Session bs = new Session("127.0.0.1", 8080, USER, "emex", "emex");
             Hashtable h = new Hashtable();
             h["email"] = "deyan.imap@localhost";
             h["to"] = "ppetrov@localhost";
@@ -59,15 +59,15 @@ namespace biztalk_console
 
         public void test_3()
         {
-            Session bs = new Session("127.0.0.1", 8080, USER);
+            Session bs = new Session("127.0.0.1", 8080, USER, "emex", "emex");
             Command cmd = new Command(bs);
-            Result bres = cmd.GetContacts();
-            if (0 == bres.code)
-            {
-                Hashtable h2 = (Hashtable)bres.return_[0];
-                //System.Diagnostics.Debug.WriteLine( 
-            }
-            Console.WriteLine(bres.desc);
+            //Result bres = cmd.GetContacts();
+            //if (0 == bres.code)
+            //{
+            //    Hashtable h2 = (Hashtable)bres.return_[0];
+            //    //System.Diagnostics.Debug.WriteLine( 
+            //}
+            //Console.WriteLine(bres.desc);
         }
 
         static void Main(string[] args)
