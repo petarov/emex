@@ -1,0 +1,28 @@
+.o: EmEx :o.
+
+ FOR DEVELOPERS
+ --------------
+
+ 1. Perl Modules
+ It is required that the following modules are installed on your Perl installation.
+ (Check scripts/install-required-perl-modules.bat)
+
+ 
+ 2. Frontend Client
+ The Frontend client is a .NET 3.5 application. This means you should have Visual Studio 2008 installed. Sorry! :-P
+
+ 3. Testing tools
+ I used the following:
+ 
+ o  Hamster.2.1.0.11 (http://www.arcorhome.de/newshamster/tgl/misc/hamster_en.html) - IMAP, POP3, SMTP
+ o  Mozilla Thunderbird (http://www.mozillamessaging.com/en-US/thunderbird/) - EMail client
+ o  The Bat (http://www.ritlabs.com/) - (Did they go commercial ?!) - EMail client
+
+ 
+ Known Issues
+ -----------------------------------------------------
+
+ 1. By 03.Jun.2009 - There was still an issue to install SOAP::Lite
+ within CPAN (Ref: http://rt.cpan.org/Public/Bug/Display.html?id=37151).
+ Resolution to copy modules manually was used !
+ (THIS IS OBSOLETE, SINCE I DECIDED TO GO THE JSON WAY)

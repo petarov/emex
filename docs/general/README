@@ -1,35 +1,37 @@
 .o: EmEx :o.
 
-
 README FILE
+------------
+
+(!!Current version is tested only on Win32 systems!!)
 
 
-Requirements
------------------------------------------------------
+ Basic Requirements
+ -----------------------------------------------------
 
- 1. Perl Modules
+ 1. Win32 System -  The Frontend client requires .NET Framework 3.5 installed to run. 
+                    (This should be available anyway with Windows XP SP3!)
+ 2. Strawberry Perl installed
+ 3. Required Perl modules must be installed 
+
  
- It is required that the following modules are installed on your Perl installation.
+ Build & INSTALL
+ -----------------------------------------------------
+ Follow these steps in order to build and run the project.
 
- o	Mail::IMAPClient
- o  JSON:XS
- o	SOAP::Lite ($OBSOLETE$)
- o  Log::Log4perl"
+ 1. Have Strawberry Perl (http://strawberryperl.com/) installed.
  
- 2. Win32
+ 2. Go to scripts/ folder and start install-required-perl-modules.bat script in order to install required Perl modules.
  
- When using the Win32 client, make sure you have .NET Framework 3.5 installed. This 
- should be available anyway with Windows XP SP3.
-
- 3. Testing tools
+ 3. Go to frontend/ folder and use the Visual Studio 2008 solution to start and build the project.
  
- o  Hamster.2.1.0.11 (http://www.arcorhome.de/newshamster/tgl/misc/hamster_en.html)
- o  Mozilla Thunderbird E-Mail Client
+ 3. Open a command line console and go to project build/ folder. 
+ 
+ 4. Set the environment variable PROJECT_PATH i.e. SET PROJECT_PATH=c:\emex\project
+ 
+ 5. Start the build script - build.bat
+ 
+ 6. Go to build/dist/ folder and locate the emex zip archive, which contains the distributable project contents.
+ 
+ 7. Extract the emex zip archive in some filder i.e. c:\emex-full and then start the project using the emex.bat script !   
 
-
-Known Issues
------------------------------------------------------
-
-1. By 03.Jun.2009 - There was still an issue to install SOAP::Lite
-within CPAN (Ref: http://rt.cpan.org/Public/Bug/Display.html?id=37151).
-Resolution to copy modules manually was used !

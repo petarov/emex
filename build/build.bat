@@ -1,12 +1,17 @@
+@echo off
+
 REM *************************************
 REM * EmEx Build Batch Script
 REM *
 REM *************************************
-@echo off
 
-SET PROJECT_PATH=c:\prj\emex
+REM SET PROJECT_PATH=c:\prj\emex
 SET DIST_PATH=dist
 SET DIST_EMEX=%DIST_PATH%\emex
+
+REM *** PREREQUISITES
+IF "%PROJECT_PATH%" == "" GOTO errenv
+IF NOT EXIST "%PROJECT_PATH%"\frontend\dotnet\bin\frontend_3_5.exe GOTO errfile 
 
 mkdir dist 
 
@@ -15,8 +20,29 @@ DEL /Q /F /S dist\*.*
 rmdir /S /Q dist\backend
 rmdir /S /Q dist\data
 rmdir /S /Q dist\scripts
-REM goto end
+goto startbuild
 
+REM *** ERROR ENV VARIABLES
+:errenv
+echo.
+echo ERROR: Environment varaible PROJECT_PATH is not set! 
+echo        Please set the variable to point to the checked out \project path - e.g. SET PROJECT_PATH=c:\emex\project
+echo.
+goto end
+
+REM *** ERROR FILES
+:errfile
+echo.
+echo ERROR: One or more binary files could not be found ! 
+echo        If you haven't yet build the .NET frontend project, please do so and then run this script again.
+echo.
+goto end
+
+
+:startbuild
+echo .
+echo Project path is %PROJECT_PATH%
+echo .
 echo Copying Folder structure ...
 XCOPY %PROJECT_PATH%\data\conf\*.conf %DIST_EMEX%%\data\conf\ /E /C /F /R /Y
 XCOPY %PROJECT_PATH%\data\conf\*.xml %DIST_EMEX%%\data\conf\ /E /C /F /R /Y
@@ -47,7 +73,8 @@ XCOPY %PROJECT_PATH%\scripts\kill-perl-proc.bat %DIST_EMEX%%\ /C /F /R /Y
 echo Creating archive ...
 cd %DIST_PATH%
 "..\7za" a "emex_dist.zip" emex\* -mx5 -xr!*\.svn\
+cd ..
+Echo Done.
 
 :end
-pause
 @echo on
