@@ -4,9 +4,12 @@
  --------------
 
  1. Perl Modules
- It is required that the following modules are installed on your Perl installation.
- (Check scripts/install-required-perl-modules.bat)
-
+ 
+ o It is required that the following modules are installed on your Perl installation.
+   (Check scripts/install-required-perl-modules.bat)
+ 
+ o Some words on IO:Socket:SSL Perl module. This module requires a valid OpenSSL on the machine. The OpenSSL
+   binaries must be accessible on the command line (modify the %PATH% environment variable).
  
  2. Frontend Client
  The Frontend client is a .NET 3.5 application. This means you should have Visual Studio 2008 installed. Sorry! :-P
