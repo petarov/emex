@@ -70,6 +70,9 @@ echo Copying Additional files ...
 XCOPY %PROJECT_PATH%\scripts\emex.bat %DIST_EMEX%%\ /C /F /R /Y
 XCOPY %PROJECT_PATH%\scripts\kill-perl-proc.bat %DIST_EMEX%%\ /C /F /R /Y
 
+XCOPY %PROJECT_PATH%\docs\general\README %DIST_EMEX%%\ /C /F /R /Y
+XCOPY %PROJECT_PATH%\docs\general\HISTORY %DIST_EMEX%%\ /C /F /R /Y
+
 echo Creating archive ...
 cd %DIST_PATH%
 "..\7za" a "emex_dist.zip" emex\* -mx5 -xr!*\.svn\

@@ -7,19 +7,19 @@ REM #               NOTE: These are required for a "Strawberry Perl" installatio
 REM #
 REM #******************************************************************************
 
-echo Installing Perl Modules ...
+echo Installing required perl modules for EmEx ...
 
-perl -MCPAN -e "install Config::Tiny"
-perl -MCPAN -e "install Mail::POP3Client"
-perl -MCPAN -e "install Mail::IMAPClient"
-perl -MCPAN -e "install IO::Socket::SSL"
-perl -MCPAN -e "install GMail::IMAPD"
-perl -MCPAN -e "install MIME::Parser"
-perl -MCPAN -e "install JSON::XS"
-perl -MCPAN -e "install Log::Log4perl"
-perl -MCPAN -e "install Date::Parse"
-perl -MCPAN -e "install DateTime"
-perl -MCPAN -e "install DateTime::Format::DateParse"
+perl -MCPAN -e "fforce install Config::Tiny"
+perl -MCPAN -e "fforce install Mail::POP3Client"
+perl -MCPAN -e "fforce install Mail::IMAPClient"
+perl -MCPAN -e "fforce install IO::Socket::SSL"
+perl -MCPAN -e "fforce install GMail::IMAPD"
+perl -MCPAN -e "fforce install MIME::Parser"
+perl -MCPAN -e "fforce install JSON::XS"
+perl -MCPAN -e "fforce install Log::Log4perl"
+perl -MCPAN -e "fforce install Date::Parse"
+perl -MCPAN -e "fforce install DateTime"
+perl -MCPAN -e "fforce install DateTime::Format::DateParse"
 
 echo !!Done !!
 

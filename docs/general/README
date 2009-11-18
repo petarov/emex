@@ -6,41 +6,35 @@ README FILE
 (!!Current version is tested only on Win32 systems!!)
 
 
- Basic Requirements
+ Requirements before running
  -----------------------------------------------------
 
  1. Win32 System -  The Frontend client requires .NET Framework 3.5 installed to run. 
                     (This should be available anyway with Windows XP SP3!)
- 2. Strawberry Perl installed
- 3. Have OpenSSL installed for IMAPS connections (check Build & Install section)
- 4. Required Perl modules must be installed (check Build & Install section) 
+ 
+ 2. Strawberry Perl installed (http://strawberryperl.com/)
+ 
+ 3. Have OpenSSL installed for IMAPS connections (check Install & Running section)
+ 
+ 4. Required Perl modules must be installed (check Install & Running section) 
  
  
- Build & INSTALL
+ Install & Running
  -----------------------------------------------------
  Follow these steps in order to build and run the project.
 
  1. Have Strawberry Perl installed. (http://strawberryperl.com/) 
  
- 2. Have OpenSSL installed. (http://gnuwin32.sourceforge.net/packages/openssl.htm)
+ 2. Have OpenSSL installed. (http://www.slproweb.com/products/Win32OpenSSL.html)
  
  3. Go to scripts/ folder and start install-required-perl-modules.bat script in order to install required Perl modules.
  
- 4. Go to frontend/ folder and use the Visual Studio 2008 solution to start and build the project.
+ 4. Extract the emex zip archive in some filder i.e. c:\emex-full.
  
- 5. Open a command line console and go to project build/ folder. 
+ 5. Start the project using the emex.bat script !
  
- 6. Set the environment variable PROJECT_PATH i.e. SET PROJECT_PATH=c:\emex\project
- 
- 7. Start the build script - build.bat
- 
- 8. Go to build/dist/ folder and locate the emex zip archive, which contains the distributable project contents.
- 
- 9. Extract the emex zip archive in some filder i.e. c:\emex-full.
- 
- 10 Start the project using the emex.bat script !
- 
- 11. Use credentials "emex/emex" (without quotes) for the Backend username and password paremters. 
+ 6. Use credentials "emex/emex" (without quotes) for the Backend username and password paremters.
+  
 
  TroubleShooting
  -----------------------------------------------------
@@ -54,5 +48,10 @@ README FILE
     o Check if all Perl modules are installed - open a console and go to the EmEx install folder, Type:
       "perl backend/bootstrap.pl"
       If there are no errors, then Perl is OK!
+      
+    o Should you get an error message when installing module "Net::SSLeay" about missing libssl32.dll functions
+      (EVP_CIPHER_iv_ or sthg. like that), then you probably have older SSL libs installed in \windows\system32 !
+      
+      
      
  

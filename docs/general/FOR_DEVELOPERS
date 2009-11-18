@@ -13,8 +13,24 @@
  
  2. Frontend Client
  The Frontend client is a .NET 3.5 application. This means you should have Visual Studio 2008 installed. Sorry! :-P
+ 
+ 3. Compiling
+ Follow these steps in order to build and run the project.
 
- 3. Testing tools
+     o Have Strawberry Perl installed. (http://strawberryperl.com/) 
+     o Have OpenSSL installed. (http://www.slproweb.com/products/Win32OpenSSL.html)
+     o Go to scripts/ folder and start install-required-perl-modules.bat script in order to install required Perl modules.
+     o Go to frontend/ folder and use the Visual Studio 2008 solution to start and build the project.
+     o Open a command line console and go to project build/ folder. 
+     o Set the environment variable PROJECT_PATH i.e. SET PROJECT_PATH=c:\emex\project
+     o Start the build script - build.bat
+     o Go to build/dist/ folder and locate the emex zip archive, which contains the distributable project contents.
+     o Extract the emex zip archive in some folder i.e. c:\emex.
+     o Start the project using the emex.bat script !
+     o Use (default) credentials "emex/emex" (without quotes) for the Backend username and password paremters. 
+
+ 4. Testing tools
+ 
  I used the following:
  
  o  Hamster.2.1.0.11 (http://www.arcorhome.de/newshamster/tgl/misc/hamster_en.html) - IMAP, POP3, SMTP
