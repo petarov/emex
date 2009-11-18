@@ -10,6 +10,8 @@ README FILE
  1. Current version is just for demo purposes. Version is tested only on Win32 platforms.
  
  2. Indexing LARGE IMAP boxes will take too much time or may not work at all!
+ 
+ 3. GMail is not supported (even though it's in the setup) - don't use it ;) !
 
 
  Requirements before running
