@@ -1,0 +1,47 @@
+.o: EmEx :o.
+
+ FOR DEVELOPERS
+ --------------
+
+ 1. Perl Modules
+ 
+ o It is required that the following modules are installed on your Perl installation.
+   (Check scripts/install-required-perl-modules.bat)
+ 
+ o Some words on IO:Socket:SSL Perl module. This module requires a valid OpenSSL on the machine. The OpenSSL
+   binaries must be accessible on the command line (modify the %PATH% environment variable).
+ 
+ 2. Frontend Client
+ The Frontend client is a .NET 3.5 application. This means you should have Visual Studio 2008 installed. Sorry! :-P
+ 
+ 3. Compiling
+ Follow these steps in order to build and run the project.
+
+     o Have Strawberry Perl installed. (http://strawberryperl.com/) 
+     o Have OpenSSL installed. (http://www.slproweb.com/products/Win32OpenSSL.html)
+     o Go to scripts/ folder and start install-required-perl-modules.bat script in order to install required Perl modules.
+     o Go to frontend/ folder and use the Visual Studio 2008 solution to start and build the project.
+     o Open a command line console and go to project build/ folder. 
+     o Set the environment variable PROJECT_PATH i.e. SET PROJECT_PATH=c:\emex\project
+     o Start the build script - build.bat
+     o Go to build/dist/ folder and locate the emex zip archive, which contains the distributable project contents.
+     o Extract the emex zip archive in some folder i.e. c:\emex.
+     o Start the project using the emex.bat script !
+     o Use (default) credentials "emex/emex" (without quotes) for the Backend username and password paremters. 
+
+ 4. Testing tools
+ 
+ I used the following:
+ 
+ o  Hamster.2.1.0.11 (http://www.arcorhome.de/newshamster/tgl/misc/hamster_en.html) - IMAP, POP3, SMTP
+ o  Mozilla Thunderbird (http://www.mozillamessaging.com/en-US/thunderbird/) - EMail client
+ o  The Bat (http://www.ritlabs.com/) - (Did they go commercial ?!) - EMail client
+
+ 
+ Known Issues
+ -----------------------------------------------------
+
+ 1. By 03.Jun.2009 - There was still an issue to install SOAP::Lite
+ within CPAN (Ref: http://rt.cpan.org/Public/Bug/Display.html?id=37151).
+ Resolution to copy modules manually was used !
+ (THIS IS OBSOLETE, SINCE I DECIDED TO GO THE JSON WAY)
