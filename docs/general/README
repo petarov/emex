@@ -3,7 +3,13 @@
 README FILE
 ------------
 
-(!!Current version is tested only on Win32 systems!!)
+
+ ***IMPORTANT***
+ -----------------------------------------------------
+
+ 1. Current version is just for demo purposes. Version is tested only on Win32 platforms.
+ 
+ 2. Indexing LARGE IMAP boxes will take too much time or may not work at all!
 
 
  Requirements before running
