@@ -75,7 +75,7 @@ XCOPY %PROJECT_PATH%\docs\general\HISTORY %DIST_EMEX%%\ /C /F /R /Y
 
 echo Creating archive ...
 cd %DIST_PATH%
-"..\7za" a "emex_dist.zip" emex\* -mx5 -xr!*\.svn\
+"..\7za" a "emex_demo_win32.zip" emex\* -mx5 -xr!*\.svn\
 cd ..
 Echo Done.
 
