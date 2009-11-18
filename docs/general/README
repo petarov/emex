@@ -26,6 +26,7 @@ README FILE
  1. Have Strawberry Perl installed. (http://strawberryperl.com/) 
  
  2. Have OpenSSL installed. (http://www.slproweb.com/products/Win32OpenSSL.html)
+    NOTE: After you install OpenSSL copy C:\OpenSSL\lib\MinGW files to C:\OpenSSL\lib\ 
  
  3. Go to scripts/ folder and start install-required-perl-modules.bat script in order to install required Perl modules.
  
