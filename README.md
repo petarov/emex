@@ -2,13 +2,13 @@
 ==========================
 
 
-# Important notice
+## Important notice
  
  * Current version is just for **demo** purposes. Version is tested only on Win32 platforms.
  * Indexing LARGE IMAP boxes will take *too much* time or may **not work** at all!
  * GMail is not supported (even though it's in the setup) - don't use it ;)
 
-# Requirements before running
+## Requirements before running
 
  1. Win32 System -  The Frontend client requires .NET Framework 3.5 installed to run. 
                     (This should be available anyway with Windows XP SP3!)
@@ -17,7 +17,7 @@
  4. Required Perl modules must be installed (check Install & Running section) 
  
  
- # Install & Running
+## Install & Running
  
  Follow these steps in order to build and run the project.
 
@@ -29,11 +29,11 @@
  5. Start the project using the emex.bat script !
  6. Use credentials "emex/emex" (without quotes) for the Backend username and password paremters.
   
- # TroubleShooting
+## TroubleShooting
  
 *(Log files are placed in x:\emex-install-path\data\logs folder)*
  
-### PROBLEM: No connection could be made because the target machine actively refused it 127.0.0.1:8080
+#### PROBLEM: No connection could be made because the target machine actively refused it 127.0.0.1:8080
 
 * Check if you have webservice (i.e. Apache) running on localhost and port 8080
 
