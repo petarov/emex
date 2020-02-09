@@ -3,8 +3,10 @@
 
 **Emex** is an E-mail client that enhances the changes the way users interacts with their mailbox and contacts.
 
-![alt text](http://i47.tinypic.com/14cs2tw.jpg "View contacts")
-![alt text](http://i49.tinypic.com/2cg2djm.jpg "View extracted tags")
+![alt text](docs/emex_screen_01.png)
+![alt text](docs/emex_screen_02.png)
+![alt text](docs/emex_screen_03.png)
+![alt text](docs/emex_screen_04.png)
 
 # Important notice
  
